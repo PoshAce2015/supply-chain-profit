@@ -1,0 +1,44 @@
+---
+alwaysApply: true
+---
+
+# Tests and CI Rules (Always)
+
+## Test Requirements
+- Unit tests required for all critical logic changes
+- Coverage target: 90%+ on `/lib/calc`, `/lib/selectors`, `/features/sla`
+- Tests must sit next to code: `*.test.ts(x)`
+- Snapshot tests only for stable UI components (tables excluded)
+- Mandatory tests when touching calc/sla/cashflow logic
+
+## Test Structure
+- `/src/test/setup.ts` - Global test setup
+- `/src/lib/calc/*.test.ts` - Calculation function tests
+- `/src/lib/selectors/*.test.ts` - Selector tests
+- `/src/features/*/__tests__/` - Feature-specific tests
+- `/tests/e2e/` - Playwright E2E tests
+
+## CI Pipeline
+- TypeScript typecheck
+- ESLint with 0 warnings
+- Prettier formatting check
+- Unit tests with coverage
+- E2E smoke tests
+- PR blocked on failing tests
+
+## Test Data
+- `/src/lib/testdata/` - Sample CSVs and fixtures
+- Deterministic test data for calculations
+- Known good/bad samples for validation
+
+## Critical Test Areas
+- Revenue and fee calculations
+- SLA timing logic
+- Cashflow simulation
+- Settlement reconciliation
+- Data validation and parsing
+
+## Revert Policy
+- Revert immediately on failing tests
+- No deployment with test failures
+- Critical logic changes require approval

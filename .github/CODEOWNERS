@@ -1,0 +1,15 @@
+# Require review from these roles by default
+* @ops-team @finance-team
+
+# Core calculation logic requires additional review
+src/lib/calc/ @ops-team @finance-team @senior-dev
+
+# Critical business logic
+src/features/sla/ @ops-team
+src/features/cashflow/ @finance-team
+src/features/reconcile/ @finance-team
+
+# Infrastructure and CI/CD
+.github/ @ops-team
+*.yml @ops-team
+*.yaml @ops-team

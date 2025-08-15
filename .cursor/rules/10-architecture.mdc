@@ -1,0 +1,49 @@
+---
+alwaysApply: true
+---
+
+# Architecture Rules (Always)
+
+## Application Structure
+- Single Page Application (SPA) with React Router
+- No backend, no network calls, no external APIs
+- Local CSV processing only
+- Redux Toolkit for state management
+- Redux-persist to LocalStorage
+
+## Precision and Rounding Rules
+- Internal calculations: 4 decimal places
+- UI display: 2 decimal places
+- Single rounding boundary at display only
+- Half-up rounding for all calculations
+
+## Tab Structure
+The application has these main tabs:
+1. **Imports** - CSV upload and mapping
+2. **Calculator** - Per-row margin calculations
+3. **Orders** - Order management and checklist
+4. **SLA** - Service level agreement monitoring
+5. **Analytics** - Performance metrics and trends
+6. **Cashflow** - Cash flow simulation
+7. **Reconcile** - Settlement reconciliation
+8. **Validator** - Data validation and quality checks
+9. **Settings** - Application configuration
+10. **Users** - User management and roles
+
+## Data Flow
+1. CSV files imported and validated with Zod
+2. Data normalized and indexed by ASIN/SKU
+3. Calculations performed on demand
+4. Results cached in Redux store
+5. UI updates reactively
+
+## Performance Budgets
+- Parse 10k-row CSV under 2s
+- Recompute SLA alerts under 150ms for 5k orders
+- First paint under 1.5s in dev on cold load
+
+## Security Constraints
+- No network calls
+- No PII ingestion
+- LocalStorage only
+- One-click data reset

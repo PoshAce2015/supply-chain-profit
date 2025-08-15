@@ -1,0 +1,57 @@
+import { test, expect } from '@playwright/test'
+
+test.describe('Smoke Tests', () => {
+  test('should load application and display navigation @smoke', async ({ page }) => {
+    // Navigate to the app
+    await page.goto('/')
+    
+    // Should redirect to imports tab
+    await expect(page).toHaveURL('/imports')
+    
+    // Should display the header
+    await expect(page.locator('h1')).toContainText('Supply Chain & Profit 1.0')
+    
+    // Should display navigation tabs
+    await expect(page.locator('nav')).toBeVisible()
+    await expect(page.locator('text=Imports')).toBeVisible()
+    await expect(page.locator('text=Calculator')).toBeVisible()
+    await expect(page.locator('text=Orders')).toBeVisible()
+    await expect(page.locator('text=SLA')).toBeVisible()
+    await expect(page.locator('text=Analytics')).toBeVisible()
+    await expect(page.locator('text=Cashflow')).toBeVisible()
+    await expect(page.locator('text=Reconcile')).toBeVisible()
+    await expect(page.locator('text=Validator')).toBeVisible()
+    await expect(page.locator('text=Settings')).toBeVisible()
+    await expect(page.locator('text=Users')).toBeVisible()
+  })
+
+  test('should navigate between tabs @smoke', async ({ page }) => {
+    await page.goto('/')
+    
+    // Click on Calculator tab
+    await page.click('text=Calculator')
+    await expect(page).toHaveURL('/calculator')
+    await expect(page.locator('h2')).toContainText('Calculator Tab')
+    
+    // Click on Orders tab
+    await page.click('text=Orders')
+    await expect(page).toHaveURL('/orders')
+    await expect(page.locator('h2')).toContainText('Orders Tab')
+    
+    // Click on Settings tab
+    await page.click('text=Settings')
+    await expect(page).toHaveURL('/settings')
+    await expect(page.locator('h2')).toContainText('Settings Tab')
+  })
+
+  test('should display KPI tiles in header @smoke', async ({ page }) => {
+    await page.goto('/')
+    
+    // Should display KPI tiles
+    await expect(page.locator('text=Revenue')).toBeVisible()
+    await expect(page.locator('text=Profit')).toBeVisible()
+    await expect(page.locator('text=Orders')).toBeVisible()
+    await expect(page.locator('text=Avg Margin')).toBeVisible()
+    await expect(page.locator('text=Settlement Variance')).toBeVisible()
+  })
+})

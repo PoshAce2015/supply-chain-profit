@@ -1,0 +1,46 @@
+---
+alwaysApply: true
+---
+
+# Release Freeze (Always)
+
+## Scope Restrictions
+- **Only bug fixes and test updates allowed**
+- **No architecture changes**
+- **No new dependencies**
+- **No network calls**
+- **Max change set: 6 files or 300 LOC**
+
+## Critical Protection Rules
+- **Calculation formulas**: If touching `src/lib/calc/`, add unit tests proving no regression to Case A/B
+- **Business logic**: Changes to SLA, cashflow, or reconciliation require senior review
+- **UI changes**: Must maintain existing functionality and accessibility
+- **Performance**: Must not degrade existing performance budgets
+
+## Allowed Changes
+- Bug fixes with minimal scope
+- Test improvements and coverage
+- Documentation updates
+- Security patches
+- Performance optimizations (if proven safe)
+
+## Forbidden Changes
+- New features or enhancements
+- Architecture refactoring
+- Dependency additions
+- Network call introduction
+- Breaking changes to APIs
+- UI redesigns
+
+## Quality Gates
+- TypeScript strict mode compliance
+- All existing tests must pass
+- E2E smoke tests must remain green
+- No new linting errors
+- Performance budgets maintained
+
+## Emergency Override
+- Only for critical security issues
+- Requires senior developer approval
+- Must include comprehensive testing
+- Must document justification
