@@ -1,0 +1,39 @@
+---
+alwaysApply: true
+---
+
+# Cursor AI Guardrails (Always)
+
+## Plan-Then-Act Workflow
+- ALWAYS ask for a plan before making changes
+- Maximum 6 files or 300 LOC per session
+- Review diffs before applying changes
+- Use Manual mode for surgical edits
+- Use Agent mode only after explicit "APPROVE PLAN" command
+
+## Forbidden Directories (Require Tests)
+The following directories contain critical business logic and require tests before any changes:
+- `src/lib/calc/**` - Pure calculation functions
+- `src/lib/selectors/**` - Derived state selectors  
+- `src/features/sla/**` - SLA engine logic
+- `src/features/cashflow/**` - Cashflow simulation
+- `src/features/reconcile/**` - Settlement reconciliation
+
+## Code Quality Rules
+- No `any` types without documented TODO
+- All calculations must be pure functions
+- 4 decimal precision internally, 2 decimal display
+- Zod validation for all data ingestion
+- Unit tests required for critical logic changes
+
+## Session Limits
+- Maximum 6 files changed per session
+- Maximum 300 lines of code per session
+- Revert on failing tests
+- Always run typecheck and lint before committing
+
+## Safety First
+- No network calls or external APIs
+- No PII handling
+- LocalStorage only for persistence
+- One-click data reset capability
