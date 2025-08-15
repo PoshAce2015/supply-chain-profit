@@ -1,0 +1,22 @@
+# Node / tooling
+node_modules/
+pnpm-lock.yaml
+.yarn/
+.npm/
+
+# Builds / caches / coverage
+dist/
+build/
+.vite/
+.cache/
+coverage/
+playwright-report/
+test-results/
+
+# Env & logs
+.env*
+*.log
+
+# OS / editor
+.DS_Store
+.vscode/
