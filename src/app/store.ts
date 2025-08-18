@@ -5,16 +5,10 @@ import { importsReducer } from '../features/imports/importsSlice'
 import { slaReducer } from '../features/sla/slaSlice'
 import { ordersReducer } from '../features/orders/ordersSlice'
 import { ratesReducer } from '../features/settings/ratesSlice'
+import usersReducer from '../features/users/usersSlice'
 
 // Inline reducers for persisted keys
 const settingsReducer = (state = {}, action: any) => {
-  switch (action.type) {
-    default:
-      return state
-  }
-}
-
-const usersReducer = (state = { role: null, email: null }, action: any) => {
   switch (action.type) {
     default:
       return state

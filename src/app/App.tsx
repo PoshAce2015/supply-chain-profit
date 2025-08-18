@@ -1,12 +1,18 @@
+
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistor } from './store'
-import Header from '../components/Header'
-import Navigation from '../components/Navigation'
+
+import LoginView from '../features/users/LoginView'
+import RegisterView from '../features/users/RegisterView'
+import PasswordResetView from '../features/users/PasswordResetView'
+import DashboardView from '../features/dashboard/DashboardView'
+import { RequireAuth, RedirectIfAuthed } from './guards'
+import LayoutAuthed from '../components/LayoutAuthed'
 import ErrorBoundary from '../components/ErrorBoundary'
 import LoadingSpinner from '../components/LoadingSpinner'
-import AlertsDrawer from '../components/AlertsDrawer'
+
 import ImportsView from '../features/imports/ImportsView'
 import CalculatorView from '../features/calculator/CalculatorView'
 import ChecklistView from '../features/orders/ChecklistView'
@@ -17,28 +23,13 @@ import ValidatorView from '../features/validator/ValidatorView'
 import SettingsView from '../features/settings/SettingsView'
 import UsersView from '../features/users/UsersView'
 import { useSlaEngine } from '../features/sla/useSlaEngine'
+import SLAView from '../features/sla/SLAView'
 import { runSelfTests, SelfTestResult } from './selftest'
+import LayoutPublic from "./LayoutPublic"
 
-// Import tab components (to be created)
-// import SlaTab from '../features/sla/SlaTab'
-// import AnalyticsTab from '../features/analytics/AnalyticsTab'
-// import CashflowTab from '../features/cashflow/CashflowTab'
-// import ReconcileTab from '../features/reconcile/ReconcileTab'
-// import ValidatorTab from '../features/validator/ValidatorTab'
-// import SettingsTab from '../features/settings/SettingsTab'
-// import UsersTab from '../features/users/UsersTab'
 
-// Placeholder components for now
-const PlaceholderTab: React.FC<{ name: string }> = ({ name }) => (
-  <div className="flex items-center justify-center h-64">
-    <div className="text-center">
-      <h2 className="text-2xl font-semibold text-gray-900 mb-2">{name} Tab</h2>
-      <p className="text-gray-600">This feature is coming soon...</p>
-    </div>
-  </div>
-)
 
-const App: React.FC = () => {
+export default function App() {
   // Initialize SLA engine
   useSlaEngine()
   
@@ -60,8 +51,6 @@ const App: React.FC = () => {
     <PersistGate loading={<LoadingSpinner />} persistor={persistor}>
       <ErrorBoundary>
         <div className="min-h-screen bg-gray-50">
-          <Header />
-          
           {/* Self-Test Banner */}
           {showSelfTestBanner && (
             <div
@@ -88,30 +77,39 @@ const App: React.FC = () => {
             </div>
           )}
           
-          <AlertsDrawer />
-          <div className="flex">
-            <Navigation />
-            <main className="flex-1 p-6">
-              <Routes>
-                <Route path="/" element={<Navigate to="/imports" replace />} />
+          <Routes>
+            {/* Public routes */}
+            <Route element={<RedirectIfAuthed />}>
+              <Route element={<LayoutPublic />}>
+                <Route path="/login" element={<LoginView />} />
+                <Route path="/register" element={<RegisterView />} />
+                <Route path="/reset-password" element={<PasswordResetView />} />
+              </Route>
+            </Route>
+
+            {/* Authed routes */}
+            <Route element={<RequireAuth />}>
+              <Route element={<LayoutAuthed />}>
+                <Route path="/dashboard" element={<DashboardView />} />
                 <Route path="/imports" element={<ImportsView />} />
                 <Route path="/calculator" element={<CalculatorView />} />
-                                            <Route path="/orders" element={<ChecklistView />} />
-                            <Route path="/sla" element={<PlaceholderTab name="SLA" />} />
-                                                        <Route path="/analytics" element={<AnalyticsView />} />
-                            <Route path="/cashflow" element={<CashflowView />} />
-                                                        <Route path="/reconcile" element={<ReconcileView />} />
-                                                        <Route path="/validator" element={<ValidatorView />} />
-                            <Route path="/settings" element={<SettingsView />} />
-                            <Route path="/users" element={<UsersView />} />
-                <Route path="*" element={<Navigate to="/imports" replace />} />
-              </Routes>
-            </main>
-          </div>
+                <Route path="/orders" element={<ChecklistView />} />
+                <Route path="/sla" element={<SLAView />} />
+                <Route path="/analytics" element={<AnalyticsView />} />
+                <Route path="/cashflow" element={<CashflowView />} />
+                <Route path="/reconcile" element={<ReconcileView />} />
+                <Route path="/validator" element={<ValidatorView />} />
+                <Route path="/settings" element={<SettingsView />} />
+                <Route path="/users" element={<UsersView />} />
+              </Route>
+            </Route>
+
+            {/* Root & catchall */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
         </div>
       </ErrorBoundary>
     </PersistGate>
   )
 }
-
-export default App

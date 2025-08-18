@@ -125,8 +125,10 @@ const ReconcileView: React.FC = () => {
           </table>
         </div>
         {rows.length === 0 && (
-          <div className="px-4 py-8 text-center text-gray-500">
-            No reconciliation data available. Import orders and settlements to see results.
+          <div className="rounded-xl border border-black/10 bg-white p-6 text-center">
+            <div className="text-lg font-semibold mb-1">No reconciliation data</div>
+            <p className="text-black/60 mb-4">Import orders and settlements to see results.</p>
+            <a href="/imports" className="inline-flex items-center px-3 h-9 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">Go to Imports</a>
           </div>
         )}
       </div>
