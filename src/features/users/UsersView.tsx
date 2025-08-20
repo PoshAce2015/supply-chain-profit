@@ -637,7 +637,7 @@ const UsersView: React.FC = () => {
       role="main" 
       aria-label="User Management Dashboard"
     >
-      <h1 className="text-2xl font-bold mb-6">User Management</h1>
+              <h1>User Management</h1>
       
       {/* Success/Error Messages */}
       {success && (
@@ -679,7 +679,7 @@ const UsersView: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm opacity-90">Total Users</p>
-                <p className="text-2xl font-bold">{dashboardMetrics.totalUsers}</p>
+                <p className="text-gray-900 text-2xl font-bold">{dashboardMetrics.totalUsers}</p>
               </div>
               <div className="text-3xl opacity-80">👥</div>
             </div>
@@ -690,7 +690,7 @@ const UsersView: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm opacity-90">Active Users</p>
-                <p className="text-2xl font-bold">{dashboardMetrics.activeUsers}</p>
+                <p className="text-green-600 text-2xl font-bold">{dashboardMetrics.activeUsers}</p>
               </div>
               <div className="text-3xl opacity-80">✅</div>
             </div>
@@ -701,7 +701,7 @@ const UsersView: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm opacity-90">Operations</p>
-                <p className="text-2xl font-bold">{dashboardMetrics.opsUsers}</p>
+                <p className="text-blue-600 text-2xl font-bold">{dashboardMetrics.opsUsers}</p>
                 <p className="text-xs opacity-80">{dashboardMetrics.opsPercentage}%</p>
               </div>
               <div className="text-3xl opacity-80">⚙️</div>
@@ -713,7 +713,7 @@ const UsersView: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm opacity-90">Finance</p>
-                <p className="text-2xl font-bold">{dashboardMetrics.financeUsers}</p>
+                <p className="text-purple-600 text-2xl font-bold">{dashboardMetrics.financeUsers}</p>
                 <p className="text-xs opacity-80">{dashboardMetrics.financePercentage}%</p>
               </div>
               <div className="text-3xl opacity-80">💰</div>
@@ -740,7 +740,7 @@ const UsersView: React.FC = () => {
           </select>
           <button
             onClick={handleSetCurrentUser}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="btn-primary px-4 py-2 rounded-md"
           >
             Set Current User
           </button>
@@ -758,13 +758,13 @@ const UsersView: React.FC = () => {
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setShowAdvancedControls(!showAdvancedControls)}
-                className="px-3 py-2 text-sm bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                className="btn-neutral px-3 py-2 text-sm rounded-md"
               >
                 ⚙️ Advanced
               </button>
               <button
                 onClick={() => setShowAddUser(!showAddUser)}
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                className="btn-success px-4 py-2 rounded-md"
                 disabled={isLoading}
               >
                 {isLoading ? '⏳' : '➕'} Add User
@@ -779,25 +779,25 @@ const UsersView: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <button
                 onClick={() => setShowExportPanel(!showExportPanel)}
-                className="px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="btn-primary px-3 py-2 text-sm rounded-md"
               >
                 📤 Export Users
               </button>
               <button
                 onClick={() => setShowImportPanel(!showImportPanel)}
-                className="px-3 py-2 text-sm bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                className="btn-neutral px-3 py-2 text-sm rounded-md"
               >
                 📥 Import Users
               </button>
               <button
                 onClick={() => setShowActivityPanel(!showActivityPanel)}
-                className="px-3 py-2 text-sm bg-orange-600 text-white rounded-md hover:bg-orange-700"
+                className="btn-secondary px-3 py-2 text-sm rounded-md"
               >
                 📊 Activity Report
               </button>
               <button
                 onClick={() => setShowRolePanel(!showRolePanel)}
-                className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                className="btn-primary px-3 py-2 text-sm rounded-md"
               >
                 🎭 Role Management
               </button>
@@ -805,25 +805,25 @@ const UsersView: React.FC = () => {
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <button
                 onClick={() => setShowCharts(!showCharts)}
-                className="px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700"
+                className="btn-success px-3 py-2 text-sm rounded-md"
               >
                 📈 Charts & Analytics
               </button>
               <button
                 onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
-                className="px-3 py-2 text-sm bg-teal-600 text-white rounded-md hover:bg-teal-700"
+                className="btn-neutral px-3 py-2 text-sm rounded-md"
               >
                 🔍 Advanced Search
               </button>
               <button
                 onClick={() => setShowPerformance(!showPerformance)}
-                className="px-3 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700"
+                className="btn-danger px-3 py-2 text-sm rounded-md"
               >
                 ⚡ Performance
               </button>
               <button
                 onClick={() => setShowPreferences(!showPreferences)}
-                className="px-3 py-2 text-sm bg-yellow-600 text-white rounded-md hover:bg-yellow-700"
+                className="btn-secondary px-3 py-2 text-sm rounded-md"
               >
                 ⚙️ Preferences
               </button>
@@ -847,7 +847,7 @@ const UsersView: React.FC = () => {
               </select>
               <button
                 onClick={handleExportUsers}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="btn-primary px-4 py-2 rounded-md"
                 disabled={isLoading}
               >
                 {isLoading ? '⏳ Exporting...' : '📤 Export'}
@@ -872,10 +872,12 @@ const UsersView: React.FC = () => {
                 accept=".csv,.json"
                 onChange={handleFileUpload}
                 className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                aria-label="Select user import file"
+                title="Choose CSV or JSON file to import users"
               />
               <button
                 onClick={handleImportUsers}
-                className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                className="btn-neutral px-4 py-2 rounded-md"
                 disabled={isLoading || !importFile}
               >
                 {isLoading ? '⏳ Importing...' : '📥 Import'}
@@ -905,7 +907,7 @@ const UsersView: React.FC = () => {
             <div className="flex items-center space-x-4">
               <button
                 onClick={handleGenerateActivityReport}
-                className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700"
+                className="btn-secondary px-4 py-2 rounded-md"
                 disabled={isLoading}
               >
                 {isLoading ? '⏳ Generating...' : '📊 Generate Report'}
@@ -1280,6 +1282,7 @@ const UsersView: React.FC = () => {
                       type="text"
                       placeholder="Field name"
                       className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
+                      aria-label="Custom field name"
                       onKeyPress={(e) => {
                         if (e.key === 'Enter') {
                           const target = e.target as HTMLInputElement
@@ -1296,6 +1299,7 @@ const UsersView: React.FC = () => {
                       type="text"
                       placeholder="Field value"
                       className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
+                      aria-label="Custom field value"
                       onKeyPress={(e) => {
                         if (e.key === 'Enter') {
                           const target = e.target as HTMLInputElement

@@ -44,14 +44,14 @@ class ErrorBoundary extends Component<Props, State> {
                 </svg>
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Something went wrong
+                Oops! Something went wrong
               </h3>
               <p className="text-sm text-gray-600 mb-4">
-                An unexpected error occurred. Please try refreshing the page.
+                We encountered an unexpected error. Please refresh the page to continue working with your supply chain data.
               </p>
               <button
                 onClick={() => window.location.reload()}
-                className="btn-primary"
+                className="btn-primary px-4 py-2 rounded-lg"
               >
                 Refresh Page
               </button>

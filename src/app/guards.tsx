@@ -1,15 +1,15 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom"
-import { isAuthed } from "./auth"
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAuthUser } from "@/lib/auth-store";
 
-export function RequireAuth(){
-  const loc = useLocation()
-  return isAuthed()
-    ? <Outlet/>
-    : <Navigate to="/login" replace state={{ from: loc.pathname }} />
+export function RequireAuth() {
+  const user = useAuthUser();
+  const loc = useLocation();
+  if (!user) return <Navigate to="/login" replace state={{ from: loc }} />;
+  return <Outlet />;
 }
 
-export function RedirectIfAuthed(){
-  return isAuthed()
-    ? <Navigate to="/dashboard" replace />
-    : <Outlet/>
+export function RedirectIfAuthed() {
+  const user = useAuthUser();
+  if (user) return <Navigate to="/dashboard" replace />;
+  return <Outlet />;
 }

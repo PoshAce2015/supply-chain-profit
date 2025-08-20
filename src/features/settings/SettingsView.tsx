@@ -902,7 +902,7 @@ const SettingsView: React.FC = () => {
       role="main" 
       aria-label="Settings Configuration Dashboard"
     >
-      <h1 className="text-2xl font-bold mb-6">Settings</h1>
+              <h1>Settings</h1>
       
       {/* Success and Error Messages */}
       {success && (
@@ -954,67 +954,67 @@ const SettingsView: React.FC = () => {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setShowSettingsSearch(!showSettingsSearch)}
-                className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="btn-primary px-3 py-1 text-sm rounded"
               >
                 🔍 Search
               </button>
               <button
                 onClick={() => setShowSettingsHistory(!showSettingsHistory)}
-                className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                className="btn-success px-3 py-1 text-sm rounded"
               >
                 📋 History
               </button>
               <button
                 onClick={() => setShowSettingsAnalytics(!showSettingsAnalytics)}
-                className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700"
+                className="btn-neutral px-3 py-1 text-sm rounded"
               >
                 📊 Analytics
               </button>
               <button
                 onClick={() => setShowKeyboardShortcuts(!showKeyboardShortcuts)}
-                className="px-3 py-1 text-sm bg-orange-600 text-white rounded hover:bg-orange-700"
+                className="btn-secondary px-3 py-1 text-sm rounded"
               >
                 ⌨️ Shortcuts
               </button>
               <button
                 onClick={() => setShowSettingsImport(!showSettingsImport)}
-                className="px-3 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                className="btn-primary px-3 py-1 text-sm rounded"
               >
                 📥 Import
               </button>
               <button
                 onClick={() => setShowSettingsTemplates(!showSettingsTemplates)}
-                className="px-3 py-1 text-sm bg-teal-600 text-white rounded hover:bg-teal-700"
+                className="btn-neutral px-3 py-1 text-sm rounded"
               >
                 📋 Templates
               </button>
               <button
                 onClick={() => setShowSettingsPresets(!showSettingsPresets)}
-                className="px-3 py-1 text-sm bg-pink-600 text-white rounded hover:bg-pink-700"
+                className="btn-secondary px-3 py-1 text-sm rounded"
               >
                 ⚙️ Presets
               </button>
               <button
                 onClick={() => setShowSettingsUsage(!showSettingsUsage)}
-                className="px-3 py-1 text-sm bg-yellow-600 text-white rounded hover:bg-yellow-700"
+                className="btn-secondary px-3 py-1 text-sm rounded"
               >
                 📈 Usage
               </button>
               <button
                 onClick={() => setShowAccessibilityPanel(!showAccessibilityPanel)}
-                className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
+                className="btn-neutral px-3 py-1 text-sm rounded"
               >
                 ♿ Accessibility
               </button>
               <button
                 onClick={() => setShowPerformancePanel(!showPerformancePanel)}
-                className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+                className="btn-danger px-3 py-1 text-sm rounded"
               >
                 ⚡ Performance
               </button>
               <button
                 onClick={optimizeForMobile}
-                className="px-3 py-1 text-sm bg-emerald-600 text-white rounded hover:bg-emerald-700"
+                className="btn-success px-3 py-1 text-sm rounded"
               >
                 📱 Mobile
               </button>
@@ -1197,6 +1197,7 @@ const SettingsView: React.FC = () => {
                          value={rule.field}
                          onChange={(e) => updateCustomValidationRule(rule.id, { field: e.target.value })}
                          className="px-2 py-1 border border-gray-300 rounded"
+                         aria-label={`Field name for rule ${rule.id}`}
                        />
                        <input
                          type="text"
@@ -1204,6 +1205,7 @@ const SettingsView: React.FC = () => {
                          value={rule.rule}
                          onChange={(e) => updateCustomValidationRule(rule.id, { rule: e.target.value })}
                          className="px-2 py-1 border border-gray-300 rounded"
+                         aria-label={`Validation rule for rule ${rule.id}`}
                        />
                        <input
                          type="text"
@@ -1211,6 +1213,7 @@ const SettingsView: React.FC = () => {
                          value={rule.message}
                          onChange={(e) => updateCustomValidationRule(rule.id, { message: e.target.value })}
                          className="px-2 py-1 border border-gray-300 rounded"
+                         aria-label={`Error message for rule ${rule.id}`}
                        />
                      </div>
                    </div>

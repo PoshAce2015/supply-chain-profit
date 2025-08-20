@@ -1,128 +1,134 @@
-import { useEffect, useRef, useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
-import { useDispatch } from "react-redux"
-import Popover from "./ui/Popover"
-import { clearUser } from "../app/auth"
-import { clearCurrentUser } from "../features/users/actions"
+// src/components/UserMenu.tsx
+import { useEffect, useRef } from "react";
+import Popover from "@/components/ui/Popover";
+import { useNavigate } from "react-router-dom";
+import { logout as authLogout } from "@/lib/auth-store";
 
 export default function UserMenu() {
-  const btnRef = useRef<HTMLButtonElement|null>(null)
-  const [open, setOpen] = useState(false)
-  const [isLoggingOut, setIsLoggingOut] = useState(false)
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const loc = useLocation()
+  const navigate = useNavigate();
+  const logoutRef = useRef<HTMLButtonElement>(null);
+  const profileRef = useRef<HTMLButtonElement>(null);
+  const settingsRef = useRef<HTMLButtonElement>(null);
 
-  // Close on route change
-  useEffect(() => { 
-    if(open) setOpen(false) 
-  }, [loc.pathname])
+  const doLogout = (evt?: any) => {
+    evt?.preventDefault?.();
+    evt?.stopPropagation?.();
+    authLogout();                                // clears keys + emits
+    navigate("/", { replace: true });
+    setTimeout(() => { if (!location.pathname.endsWith("/")) location.replace("/"); }, 0);
+  };
 
-  const go = (path: string) => { 
-    setOpen(false); 
-    navigate(path) 
-  }
+  const goToProfile = (evt?: any) => {
+    evt?.preventDefault?.();
+    evt?.stopPropagation?.();
+    navigate("/users");
+  };
 
-  const logout = async () => {
-    setIsLoggingOut(true)
-    setOpen(false)
-    
-    try {
-      // Clear Redux state
-      dispatch(clearCurrentUser())
-      
-      // Clear ALL known auth footprints to avoid RedirectIfAuthed loop
-      clearUser()
-      
-      // Clear any additional storage
-      localStorage.removeItem("demo:users")
-      localStorage.removeItem("users")
-      localStorage.removeItem("currentUser")
-      sessionStorage.clear()
-      
-      // Simulate logout delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
-      // Navigate to login page
-      navigate("/", { replace: true })
-    } catch (error) {
-      console.error("Logout error:", error)
-      // Even if there's an error, still try to navigate to login
-      navigate("/", { replace: true })
-    } finally {
-      setIsLoggingOut(false)
+  const goToSettings = (evt?: any) => {
+    evt?.preventDefault?.();
+    evt?.stopPropagation?.();
+    navigate("/settings");
+  };
+
+  // Native capture listeners on the actual DOM nodes (beats any React quirks)
+  useEffect(() => {
+    const logoutEl = logoutRef.current;
+    const profileEl = profileRef.current;
+    const settingsEl = settingsRef.current;
+
+    if (logoutEl) {
+      const logoutHandler = (e: Event) => doLogout(e);
+      logoutEl.addEventListener("pointerdown", logoutHandler, { capture: true });
+      logoutEl.addEventListener("click", logoutHandler, { capture: true });
     }
-  }
+
+    if (profileEl) {
+      const profileHandler = (e: Event) => goToProfile(e);
+      profileEl.addEventListener("pointerdown", profileHandler, { capture: true });
+      profileEl.addEventListener("click", profileHandler, { capture: true });
+    }
+
+    if (settingsEl) {
+      const settingsHandler = (e: Event) => goToSettings(e);
+      settingsEl.addEventListener("pointerdown", settingsHandler, { capture: true });
+      settingsEl.addEventListener("click", settingsHandler, { capture: true });
+    }
+
+    return () => {
+      if (logoutEl) {
+        const logoutHandler = (e: Event) => doLogout(e);
+        logoutEl.removeEventListener("pointerdown", logoutHandler, { capture: true } as any);
+        logoutEl.removeEventListener("click", logoutHandler, { capture: true } as any);
+      }
+      if (profileEl) {
+        const profileHandler = (e: Event) => goToProfile(e);
+        profileEl.removeEventListener("pointerdown", profileHandler, { capture: true } as any);
+        profileEl.removeEventListener("click", profileHandler, { capture: true } as any);
+      }
+      if (settingsEl) {
+        const settingsHandler = (e: Event) => goToSettings(e);
+        settingsEl.removeEventListener("pointerdown", settingsHandler, { capture: true } as any);
+        settingsEl.removeEventListener("click", settingsHandler, { capture: true } as any);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <>
-      <button
-        ref={btnRef}
-        data-testid="user-menu-button"
-        className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 hover:bg-white/20 backdrop-blur-sm transition-colors"
-        onPointerDown={(e) => { 
-          e.preventDefault(); 
-          e.stopPropagation(); 
-          setOpen(v => !v) 
-        }}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        disabled={isLoggingOut}
-      >
-        {isLoggingOut ? (
-          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-        ) : (
-          "F"
-        )}
-      </button>
-
-      <Popover anchor={btnRef.current} open={open} onClose={() => setOpen(false)} alignRight>
-        <div 
-          data-testid="user-menu-panel" 
-          role="menu" 
-          className="w-[240px] p-2 bg-white rounded-lg shadow-lg border border-slate-200"
+    <Popover
+      align="end"
+      button={({ ref, toggle }) => (
+        <button
+          ref={ref}
+          data-testid="user-menu-button"
+          type="button"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 hover:bg-white/20 backdrop-blur-sm"
+          onClick={toggle}
         >
-          <button 
-            role="menuitem" 
-            data-testid="menu-item-profile" 
-            className="w-full text-left rounded-md px-3 h-9 hover:bg-slate-50 text-slate-700 transition-colors" 
-            onClick={() => go("/users")}
-            disabled={isLoggingOut}
-          >
-            Profile
-          </button>
-          <button 
-            role="menuitem" 
-            data-testid="menu-item-settings" 
-            className="w-full text-left rounded-md px-3 h-9 hover:bg-slate-50 text-slate-700 transition-colors" 
-            onClick={() => go("/settings")}
-            disabled={isLoggingOut}
-          >
-            Settings
-          </button>
-          <div className="border-t border-slate-200 my-1"></div>
-          <button 
-            role="menuitem" 
-            data-testid="menu-item-logout" 
-            className={`w-full text-left rounded-md px-3 h-9 transition-colors ${
-              isLoggingOut 
-                ? 'text-slate-400 cursor-not-allowed' 
-                : 'hover:bg-red-50 text-red-600 hover:text-red-700'
-            }`} 
-            onClick={logout}
-            disabled={isLoggingOut}
-          >
-            {isLoggingOut ? (
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 border border-red-400 border-t-transparent rounded-full animate-spin"></div>
-                <span>Signing out...</span>
-              </div>
-            ) : (
-              "Sign out"
-            )}
-          </button>
-        </div>
-      </Popover>
-    </>
-  )
+          F
+        </button>
+      )}
+    >
+      <div role="menu" data-testid="user-menu-panel">
+        <button
+          ref={profileRef}
+          role="menuitem"
+          data-testid="menu-item-profile"
+          data-action="profile"
+          type="button"
+          className="w-full px-3 py-2 text-left rounded hover:bg-slate-50"
+          onPointerDown={goToProfile}
+          onClick={goToProfile}
+        >
+          Profile
+        </button>
+        <button
+          ref={settingsRef}
+          role="menuitem"
+          data-testid="menu-item-settings"
+          data-action="settings"
+          type="button"
+          className="w-full px-3 py-2 text-left rounded hover:bg-slate-50"
+          onPointerDown={goToSettings}
+          onClick={goToSettings}
+        >
+          Settings
+        </button>
+        <button
+          ref={logoutRef}
+          role="menuitem"
+          data-testid="menu-item-logout"
+          data-action="logout"
+          type="button"
+          className="w-full px-3 py-2 text-left rounded hover:bg-red-50 text-red-600"
+          onPointerDown={doLogout}
+          onClick={doLogout}
+        >
+          Logout
+        </button>
+      </div>
+    </Popover>
+  );
 }

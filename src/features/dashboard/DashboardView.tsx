@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import AnimatedCounter from "../../components/ui/AnimatedCounter";
 import { selectDataset } from "../imports/selectors";
@@ -58,7 +58,7 @@ class KPIErrorBoundary extends React.Component<
               Retry
             </button>
           </div>
-          <div className="kpi-value text-red-600">Error loading data</div>
+          <div className="kpi-value text-red-600">Unable to load KPI data</div>
           <div className="text-xs text-gray-400">Retry count: {this.state.retryCount}</div>
         </div>
       );
@@ -233,7 +233,7 @@ function ThresholdAlertsSection({ alerts }: { alerts: any[] }) {
   return (
     <section className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-6 mb-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-red-900 flex items-center gap-2">
+        <h2 className="text-red-900 flex items-center gap-2">
           <span className="text-2xl">🚨</span>
           <span>Critical Threshold Alerts ({alerts.length})</span>
         </h2>
@@ -352,8 +352,8 @@ export default function DashboardView() {
     cachedKPICalculation('kpi_settlement_variance', () => calculateSettlementVariance(settlements, orders))
   );
 
-  // Convert calculations to KPI data format with comparison periods
-  const kpiData: KPIData[] = [
+  // Convert calculations to KPI data format with comparison periods - MEMOIZED
+  const kpiData: KPIData[] = useMemo(() => [
     {
       id: 'kpi-revenue',
       title: 'Revenue',
@@ -440,17 +440,21 @@ export default function DashboardView() {
       lastUpdated: settlementVarianceKPI.lastUpdated,
       comparisons: settlementVarianceKPI.comparisons
     }
-  ];
+  ], [revenueKPI, profitKPI, ordersKPI, avgMarginKPI, cashFlowKPI, slaComplianceKPI, settlementVarianceKPI]);
 
-  // Check threshold alerts
-  useEffect(() => {
-    const alerts = checkAllKPIThresholds(kpiData.map(kpi => ({
+  // Check threshold alerts - MEMOIZED to prevent infinite loops
+  const currentThresholdAlerts = useMemo(() => {
+    return checkAllKPIThresholds(kpiData.map(kpi => ({
       id: kpi.id.replace('kpi-', ''),
       title: kpi.title,
       value: kpi.value
     })));
-    setThresholdAlerts(alerts);
   }, [kpiData]);
+
+  // Update threshold alerts when they change
+  useEffect(() => {
+    setThresholdAlerts(currentThresholdAlerts);
+  }, [currentThresholdAlerts]);
 
   // Subscribe to threshold alert changes
   useEffect(() => {
@@ -525,7 +529,7 @@ export default function DashboardView() {
   }
 
   return (
-    <div className="dashboard-view space-y-8" data-testid="dashboard-view">
+    <div className="dashboard-view space-y-8 min-w-0 overflow-x-hidden page-content" data-testid="dashboard-view">
       {/* Error Toast */}
       {error && (
         <div className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg animate-in slide-in-from-right duration-300">
@@ -555,7 +559,7 @@ export default function DashboardView() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Dashboard</h1>
+          <h1 className="text-slate-900 mb-2">Dashboard</h1>
           <p className="text-slate-600 text-lg">Overview of operations, finance, and recent activity</p>
           <p className="text-xs text-slate-400 mt-1">
             Last updated: {lastUpdated.toLocaleTimeString()}
@@ -585,26 +589,30 @@ export default function DashboardView() {
       </div>
 
       {/* KPI tiles - PRODUCTION READY */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpiData.slice(0, 4).map((kpi) => (
-          <KPICard key={kpi.id} data={kpi} onDrillDown={handleKPIDrillDown} isLoading={isLoading} />
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 min-w-0">
+        {kpiData.slice(0, 4).map((kpi, index) => (
+          <div key={kpi.id} className="card-enter" style={{ animationDelay: `${index * 0.05}s` }}>
+            <KPICard data={kpi} onDrillDown={handleKPIDrillDown} isLoading={isLoading} />
+          </div>
         ))}
       </section>
 
       {/* Additional KPI tiles - Row 2 */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {kpiData.slice(4).map((kpi) => (
-          <KPICard key={kpi.id} data={kpi} onDrillDown={handleKPIDrillDown} isLoading={isLoading} />
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 min-w-0">
+        {kpiData.slice(4).map((kpi, index) => (
+          <div key={kpi.id} className="card-enter" style={{ animationDelay: `${(index + 4) * 0.05}s` }}>
+            <KPICard data={kpi} onDrillDown={handleKPIDrillDown} isLoading={isLoading} />
+          </div>
         ))}
       </section>
 
       {/* Enhanced Quick Actions */}
       <section className="bg-white rounded-xl border border-slate-200 p-6">
-        <h2 className="text-xl font-semibold text-slate-900 mb-6 flex items-center gap-2">
+        <h2 className="text-slate-900 mb-6 flex items-center gap-2">
           <span>⚡</span>
           <span>Quick Actions</span>
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 min-w-0 overflow-x-auto">
           <Link 
             to="/calculator" 
             className="qa-btn group bg-gradient-to-br from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 border border-amber-200 hover:border-amber-300 rounded-xl p-4 text-center transition-all duration-200 hover:shadow-md hover:-translate-y-1"
@@ -663,7 +671,7 @@ export default function DashboardView() {
 
       {/* Enhanced Recent Activity */}
       <section className="bg-white rounded-xl border border-slate-200 p-6">
-        <h2 className="text-xl font-semibold text-slate-900 mb-6 flex items-center gap-2">
+        <h2 className="text-slate-900 mb-6 flex items-center gap-2">
           <span>📈</span>
           <span>Recent Activity</span>
         </h2>
@@ -725,7 +733,7 @@ export default function DashboardView() {
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                       <div className="bg-white rounded-xl p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
                         <div className="flex items-center justify-between mb-6">
-                          <h2 className="text-2xl font-bold text-slate-900">
+                          <h2 className="text-slate-900">
                             {drillDownModal.data.title}
                           </h2>
                           <button
@@ -739,7 +747,7 @@ export default function DashboardView() {
                         {/* Current Value */}
                         <div className="mb-6 p-4 bg-slate-50 rounded-lg">
                           <div className="text-sm text-slate-600 mb-1">Current Value</div>
-                          <div className="text-3xl font-bold text-slate-900">
+                          <div className="text-slate-900 text-2xl font-bold">
                             {drillDownModal.data.currentValue.toLocaleString()}
                           </div>
                         </div>
@@ -747,7 +755,7 @@ export default function DashboardView() {
                         {/* Breakdown */}
                         {drillDownModal.data.breakdown.length > 0 && (
                           <div className="mb-6">
-                            <h3 className="text-lg font-semibold text-slate-900 mb-3">Breakdown</h3>
+                            <h3 className="text-slate-900 mb-3">Breakdown</h3>
                             <div className="space-y-2">
                               {drillDownModal.data.breakdown.map((item, index) => (
                                 <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
@@ -772,7 +780,7 @@ export default function DashboardView() {
                         {/* Insights */}
                         {drillDownModal.data.insights.length > 0 && (
                           <div className="mb-6">
-                            <h3 className="text-lg font-semibold text-slate-900 mb-3">Insights</h3>
+                            <h3 className="text-slate-900 mb-3">Insights</h3>
                             <div className="space-y-2">
                               {drillDownModal.data.insights.map((insight, index) => (
                                 <div key={index} className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg">
@@ -787,7 +795,7 @@ export default function DashboardView() {
                         {/* Recommendations */}
                         {drillDownModal.data.recommendations.length > 0 && (
                           <div className="mb-6">
-                            <h3 className="text-lg font-semibold text-slate-900 mb-3">Recommendations</h3>
+                            <h3 className="text-slate-900 mb-3">Recommendations</h3>
                             <div className="space-y-2">
                               {drillDownModal.data.recommendations.map((rec, index) => (
                                 <div key={index} className="flex items-start gap-2 p-3 bg-green-50 rounded-lg">

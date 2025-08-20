@@ -639,7 +639,7 @@ const ImportsView: React.FC = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <h1>
                 <span className="text-4xl">📁</span>
                 CSV Data Imports
               </h1>
@@ -651,7 +651,7 @@ const ImportsView: React.FC = () => {
               {/* Priority 2: Enhanced User Experience - Import Wizard Button */}
               <button
                 onClick={startImportWizard}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+                className="btn-primary px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
               >
                 <span>🧙‍♂️</span>
                 Import Wizard
@@ -660,7 +660,7 @@ const ImportsView: React.FC = () => {
               {/* Priority 2: Data Management Features - Import History Button */}
               <button
                 onClick={() => setShowHistory(!showHistory)}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+                className="btn-primary px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
               >
                 <span>📋</span>
                 Import History
@@ -669,7 +669,7 @@ const ImportsView: React.FC = () => {
               {/* Priority 3: Advanced Features - Batch Import Button */}
               <button
                 onClick={() => setShowBatchManager(!showBatchManager)}
-                className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors flex items-center gap-2"
+                className="btn-success px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
               >
                 <span>📦</span>
                 Batch Import
@@ -678,7 +678,7 @@ const ImportsView: React.FC = () => {
               {/* Priority 3: Advanced Features - Data Transformations Button */}
               <button
                 onClick={() => setShowTransformations(!showTransformations)}
-                className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors flex items-center gap-2"
+                className="btn-neutral px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
               >
                 <span>🔄</span>
                 Transformations
@@ -687,7 +687,7 @@ const ImportsView: React.FC = () => {
               {/* Priority 3: Performance Optimizations - Metrics Button */}
               <button
                 onClick={() => setShowMetrics(!showMetrics)}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+                className="btn-neutral px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
               >
                 <span>📊</span>
                 Performance
@@ -696,7 +696,7 @@ const ImportsView: React.FC = () => {
               <button
                 onClick={exportMappings}
                 data-testid="export-mappings"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                className="btn-primary px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
               >
                 <span>📤</span>
                 Export Mappings
@@ -712,7 +712,7 @@ const ImportsView: React.FC = () => {
                 />
                 <label
                   htmlFor="import-mappings-input"
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer flex items-center gap-2"
+                  className="btn-success px-4 py-2 rounded-lg transition-colors cursor-pointer flex items-center gap-2"
                 >
                   <span>📥</span>
                   Import Mappings
@@ -727,7 +727,7 @@ const ImportsView: React.FC = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Import Wizard</h2>
+                <h2>Import Wizard</h2>
                 <button
                   onClick={() => setShowWizard(false)}
                   className="text-gray-400 hover:text-gray-600"
@@ -805,7 +805,7 @@ const ImportsView: React.FC = () => {
         {showHistory && (
           <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8 shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+              <h2>
                 <span>📋</span>
                 Import History
               </h2>
@@ -861,7 +861,7 @@ const ImportsView: React.FC = () => {
         {showBatchManager && (
           <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8 shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+              <h2>
                 <span>📦</span>
                 Batch Import Manager
               </h2>
@@ -961,7 +961,7 @@ const ImportsView: React.FC = () => {
         {showTransformations && (
           <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8 shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+              <h2>
                 <span>🔄</span>
                 Data Transformations
               </h2>
@@ -1045,7 +1045,7 @@ const ImportsView: React.FC = () => {
         {showMetrics && (
           <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8 shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+              <h2>
                 <span>📊</span>
                 Performance Metrics
               </h2>
@@ -1061,19 +1061,19 @@ const ImportsView: React.FC = () => {
               {/* Performance Overview */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-4 bg-blue-50 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600">
+                  <div className="text-blue-600 text-2xl font-bold">
                     {Object.keys(importMetrics).length}
                   </div>
                   <div className="text-sm text-blue-800">Total Imports</div>
                 </div>
                 <div className="p-4 bg-green-50 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600">
+                  <div className="text-green-600 text-2xl font-bold">
                     {Object.values(importMetrics).filter(m => m.duration).length}
                   </div>
                   <div className="text-sm text-green-800">Completed</div>
                 </div>
                 <div className="p-4 bg-purple-50 rounded-lg">
-                  <div className="text-2xl font-bold text-purple-600">
+                  <div className="text-purple-600 text-2xl font-bold">
                     {Object.values(importMetrics).reduce((sum, m) => sum + m.rowsProcessed, 0).toLocaleString()}
                   </div>
                   <div className="text-sm text-purple-800">Total Rows</div>
@@ -1122,7 +1122,7 @@ const ImportsView: React.FC = () => {
 
         {/* Templates Section */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8 shadow-sm">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <h2>
             <span>📋</span>
             CSV Templates
           </h2>
@@ -1183,7 +1183,7 @@ const ImportsView: React.FC = () => {
             {fileTypes.map(({ type, label, description, icon }) => (
               <div key={type} className={activeTab === type ? 'block' : 'hidden'}>
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-2">
+                  <h3 className="text-gray-900 flex items-center gap-2 mb-2">
                     <span>{icon}</span>
                     {label}
                   </h3>
@@ -1373,7 +1373,7 @@ const ImportsView: React.FC = () => {
         {/* Priority 2: Enhanced User Experience - Help Section */}
         <div className="mt-8 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+            <h2>
               <span>💡</span>
               Need Help?
             </h2>

@@ -547,7 +547,7 @@ const ChecklistView: React.FC = () => {
       
       {/* Priority 1: Page Header with Clear Identity */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Orders & Checklist</h1>
+        <h1>Orders & Checklist</h1>
         <p className="text-gray-600">Manage order processing, track SLA compliance, and monitor aging orders</p>
       </div>
       
@@ -578,7 +578,7 @@ const ChecklistView: React.FC = () => {
               </div>
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
+                className="btn-primary px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 Search
               </button>
@@ -664,7 +664,7 @@ const ChecklistView: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Orders</p>
-                <p className="text-2xl font-bold text-gray-900">{quickStats.total}</p>
+                <p className="text-gray-900 text-2xl font-bold">{quickStats.total}</p>
               </div>
               <div className="p-2 bg-blue-100 rounded-lg">
                 <span className="text-blue-600 text-xl">📋</span>
@@ -676,7 +676,7 @@ const ChecklistView: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Red Alerts</p>
-                <p className="text-2xl font-bold text-red-600">{quickStats.redAlerts}</p>
+                <p className="text-red-600 text-2xl font-bold">{quickStats.redAlerts}</p>
               </div>
               <div className="p-2 bg-red-100 rounded-lg">
                 <span className="text-red-600 text-xl">🚨</span>
@@ -688,7 +688,7 @@ const ChecklistView: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Yellow Alerts</p>
-                <p className="text-2xl font-bold text-yellow-600">{quickStats.yellowAlerts}</p>
+                <p className="text-yellow-600 text-2xl font-bold">{quickStats.yellowAlerts}</p>
               </div>
               <div className="p-2 bg-yellow-100 rounded-lg">
                 <span className="text-yellow-600 text-xl">⚠️</span>
@@ -700,7 +700,7 @@ const ChecklistView: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Green Status</p>
-                <p className="text-2xl font-bold text-green-600">{quickStats.greenStatus}</p>
+                <p className="text-green-600 text-2xl font-bold">{quickStats.greenStatus}</p>
               </div>
               <div className="p-2 bg-green-100 rounded-lg">
                 <span className="text-green-600 text-xl">✅</span>
@@ -775,7 +775,7 @@ const ChecklistView: React.FC = () => {
           {/* Priority 2: Export Button */}
           <button
             onClick={() => setShowExportOptions(!showExportOptions)}
-            className="px-3 py-1 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500"
+                            className="btn-success px-3 py-1 text-sm rounded-lg focus:ring-2 focus:ring-green-500"
           >
             Export
           </button>
@@ -793,8 +793,8 @@ const ChecklistView: React.FC = () => {
             onClick={() => setShowAdvancedFeatures(!showAdvancedFeatures)}
             className={`px-3 py-1 text-sm rounded-lg transition-colors ${
               showAdvancedFeatures 
-                ? 'bg-purple-600 text-white hover:bg-purple-700' 
-                : 'bg-gray-600 text-white hover:bg-gray-700'
+                ? 'btn-primary' 
+                : 'btn-neutral'
             }`}
           >
             <span className="flex items-center gap-1">
@@ -812,13 +812,13 @@ const ChecklistView: React.FC = () => {
             <span className="text-sm font-medium text-gray-700">Export as:</span>
             <button
               onClick={() => handleExport('csv')}
-              className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="btn-primary px-3 py-1 text-sm rounded"
             >
               CSV
             </button>
             <button
               onClick={() => handleExport('json')}
-              className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700"
+              className="btn-neutral px-3 py-1 text-sm rounded"
             >
               JSON
             </button>
@@ -842,13 +842,13 @@ const ChecklistView: React.FC = () => {
               </span>
               <button
                 onClick={() => handleBulkAction('acknowledge')}
-                className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="btn-primary px-3 py-1 text-sm rounded"
               >
                 Acknowledge All
               </button>
               <button
                 onClick={() => handleBulkAction('verify')}
-                className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                className="btn-success px-3 py-1 text-sm rounded"
               >
                 Verify All
               </button>
@@ -884,25 +884,25 @@ const ChecklistView: React.FC = () => {
             <div className="flex gap-2">
               <button
                 onClick={measurePerformance}
-                className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700"
+                className="btn-neutral px-3 py-1 text-sm rounded"
               >
                 Measure Performance
               </button>
               <button
                 onClick={validateData}
-                className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="btn-primary px-3 py-1 text-sm rounded"
               >
                 Validate Data
               </button>
               <button
                 onClick={generatePredictiveInsights}
-                className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                className="btn-success px-3 py-1 text-sm rounded"
               >
                 Generate Insights
               </button>
               <button
                 onClick={generateAnalytics}
-                className="px-3 py-1 text-sm bg-orange-600 text-white rounded hover:bg-orange-700"
+                className="btn-secondary px-3 py-1 text-sm rounded"
               >
                 Run Analytics
               </button>
@@ -1283,7 +1283,7 @@ const ChecklistView: React.FC = () => {
       {/* Priority 1: Top 10 Aging Orders - Enhanced */}
       <div className="mb-6 bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-          <h3 className="text-lg font-semibold text-gray-900">Top 10 Aging Orders</h3>
+          <h3 className="text-gray-900">Top 10 Aging Orders</h3>
           <p className="text-sm text-gray-600 mt-1">Orders requiring immediate attention</p>
         </div>
         <div className="overflow-x-auto">
@@ -1369,7 +1369,7 @@ const ChecklistView: React.FC = () => {
                       <button
                         data-testid={`ack-step1-${order.asin}`}
                         onClick={() => handleAckStep1(order.asin)}
-                        className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                        className="btn-primary px-3 py-1 text-xs rounded"
                       >
                         Acknowledge
                       </button>
@@ -1382,7 +1382,7 @@ const ChecklistView: React.FC = () => {
                         title={!stepLocks.step2Enabled ? "Two-person rule: Step 1 must be completed by a different user" : ""}
                         className={`px-3 py-1 text-xs rounded ${
                           stepLocks.step2Enabled
-                            ? 'bg-green-600 text-white hover:bg-green-700'
+                            ? 'btn-success'
                             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         }`}
                       >
@@ -1400,7 +1400,7 @@ const ChecklistView: React.FC = () => {
       {/* Priority 1: All Orders - Enhanced with Filtered Results */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-          <h3 className="text-lg font-semibold text-gray-900">All Orders</h3>
+          <h3 className="text-gray-900">All Orders</h3>
           <p className="text-sm text-gray-600 mt-1">Complete order management and processing</p>
         </div>
         
@@ -1408,7 +1408,7 @@ const ChecklistView: React.FC = () => {
         {filteredAndSortedOrders.length === 0 && (
           <div className="p-8 text-center">
             <div className="text-gray-400 text-6xl mb-4">📋</div>
-            <h4 className="text-lg font-medium text-gray-900 mb-2">No orders found</h4>
+            <h4 className="text-gray-900 mb-2">No orders found</h4>
             <p className="text-gray-600 mb-4">
               {searchTerm 
                 ? `No orders match "${searchTerm}". Try adjusting your search terms.`
@@ -1417,7 +1417,7 @@ const ChecklistView: React.FC = () => {
             </p>
             <button
               onClick={handleClearFilters}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="btn-primary px-4 py-2 rounded-lg"
             >
               Clear Filters
             </button>

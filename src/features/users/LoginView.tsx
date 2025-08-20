@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useNavigate, Link, useLocation } from "react-router-dom"
-import { writeUser } from "../../app/auth"
+import { login } from "../../lib/auth-store"
 import { 
   generateCSRFToken, 
   storeCSRFToken, 
@@ -248,7 +248,7 @@ export default function LoginView() {
       })
       
       // Write user and navigate
-      writeUser({ email: sanitizedEmail, role: "ops" })
+      login({ email: sanitizedEmail, role: "ops" })
       navigate("/dashboard", { replace: true })
     } catch (error) {
       const loginTime = performance.now() - startTime
@@ -315,7 +315,7 @@ export default function LoginView() {
               </svg>
             </div>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">Welcome Back</h1>
+          <h1 className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">Welcome Back</h1>
           <p className="text-slate-600 dark:text-slate-400 text-lg">Sign in to your account to continue</p>
         </div>
 
@@ -582,7 +582,7 @@ export default function LoginView() {
                   userAgent: navigator.userAgent,
                   sessionId: generateSessionId()
                 })
-                writeUser({ email: 'google-user@example.com', role: 'ops' })
+                login({ email: 'google-user@example.com', role: 'ops' })
                 navigate('/dashboard', { replace: true })
               }}
               disabled={isLoading || isLocked}
@@ -613,7 +613,7 @@ export default function LoginView() {
                   userAgent: navigator.userAgent,
                   sessionId: generateSessionId()
                 })
-                writeUser({ email: 'apple-user@example.com', role: 'ops' })
+                login({ email: 'apple-user@example.com', role: 'ops' })
                 navigate('/dashboard', { replace: true })
               }}
               disabled={isLoading || isLocked}
@@ -641,7 +641,7 @@ export default function LoginView() {
                   userAgent: navigator.userAgent,
                   sessionId: generateSessionId()
                 })
-                writeUser({ email: 'github-user@example.com', role: 'ops' })
+                login({ email: 'github-user@example.com', role: 'ops' })
                 navigate('/dashboard', { replace: true })
               }}
               disabled={isLoading || isLocked}

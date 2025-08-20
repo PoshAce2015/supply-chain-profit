@@ -699,7 +699,7 @@ const CalculatorView: React.FC = () => {
   if (calculatedRows.length === 0) {
     return (
       <div data-testid="calc-view" className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Calculator</h2>
+        <h2>Calculator</h2>
         
         {/* Help Text and Instructions */}
         <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
@@ -710,7 +710,7 @@ const CalculatorView: React.FC = () => {
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="text-sm font-semibold text-blue-900 mb-2">How to use the Calculator</h3>
+              <h3 className="text-blue-900 mb-2">How to use the Calculator</h3>
               <div className="text-sm text-blue-700 space-y-1">
                 <p>• <strong>Data Source:</strong> Calculations are based on imported orders and products data</p>
                 <p>• <strong>Real-time Updates:</strong> Results update automatically when data changes</p>
@@ -729,18 +729,18 @@ const CalculatorView: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Data Available</h3>
+            <h3 className="text-gray-900 mb-2">No Data Available</h3>
             <p className="text-gray-600 mb-4">Please import orders and products data to start calculating profitability.</p>
             <div className="flex justify-center gap-3">
               <button 
                 onClick={() => window.location.href = '/imports'}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="btn-primary px-4 py-2 rounded-lg transition-colors"
               >
                 Go to Imports
               </button>
               <button 
                 onClick={() => window.location.href = '/dashboard'}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                className="btn-neutral px-4 py-2 rounded-lg transition-colors"
               >
                 View Dashboard
               </button>
@@ -750,7 +750,7 @@ const CalculatorView: React.FC = () => {
         
         {/* Table Legend */}
         <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-          <h4 className="text-sm font-semibold text-gray-700 mb-2">Table Legend</h4>
+          <h4 className="text-gray-700 mb-2">Table Legend</h4>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs text-gray-600">
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 bg-green-100 border border-green-300 rounded"></span>
@@ -773,7 +773,7 @@ const CalculatorView: React.FC = () => {
         
         {/* Sample Data Preview */}
         <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <h4 className="text-sm font-semibold text-blue-900 mb-2">Sample Data Structure</h4>
+          <h4 className="text-blue-900 mb-2">Sample Data Structure</h4>
           <p className="text-sm text-blue-700 mb-3">The calculator expects the following data structure:</p>
           <div className="bg-white p-3 rounded border text-xs font-mono text-gray-700">
             <div>Orders: ASIN, SKU, Quantity, Selling Price, Channel</div>
@@ -787,7 +787,7 @@ const CalculatorView: React.FC = () => {
   
   return (
     <div data-testid="calc-view" className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Calculator</h2>
+              <h2>Calculator</h2>
       
       {/* Help Text and Instructions */}
       <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
@@ -798,7 +798,7 @@ const CalculatorView: React.FC = () => {
             </svg>
           </div>
           <div className="flex-1">
-            <h3 className="text-sm font-semibold text-blue-900 mb-2">How to use the Calculator</h3>
+                          <h3 className="text-blue-900 mb-2">How to use the Calculator</h3>
             <div className="text-sm text-blue-700 space-y-1">
               <p>• <strong>Data Source:</strong> Calculations are based on imported orders and products data</p>
               <p>• <strong>Real-time Updates:</strong> Results update automatically when data changes</p>
@@ -1583,7 +1583,7 @@ const CalculatorView: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-blue-600">Total Revenue</p>
-                  <p className="text-2xl font-bold text-blue-900">{formatINR(summaryStats.totalRevenue)}</p>
+                  <p className="text-blue-900 text-2xl font-bold">{formatINR(summaryStats.totalRevenue)}</p>
                 </div>
                 <div className="text-blue-500">
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1625,7 +1625,7 @@ const CalculatorView: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-purple-600">Average Margin</p>
-                  <p className="text-2xl font-bold text-purple-900">{round2(summaryStats.averageMargin)}%</p>
+                  <p className="text-purple-900 text-2xl font-bold">{round2(summaryStats.averageMargin)}%</p>
                 </div>
                 <div className="text-purple-500">
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1640,7 +1640,7 @@ const CalculatorView: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-orange-600">Total Quantity</p>
-                  <p className="text-2xl font-bold text-orange-900">{summaryStats.totalQuantity.toLocaleString()}</p>
+                  <p className="text-orange-900 text-2xl font-bold">{summaryStats.totalQuantity.toLocaleString()}</p>
                 </div>
                 <div className="text-orange-500">
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1747,6 +1747,7 @@ const CalculatorView: React.FC = () => {
                   checked={selectAll}
                   onChange={handleSelectAll}
                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  aria-label="Select all rows"
                 />
               </th>
               
@@ -1803,6 +1804,7 @@ const CalculatorView: React.FC = () => {
                       checked={selectedRows.has(tableIndex)}
                       onChange={() => handleRowSelect(tableIndex)}
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      aria-label={`Select row for ${row.asin}`}
                     />
                   </td>
                   

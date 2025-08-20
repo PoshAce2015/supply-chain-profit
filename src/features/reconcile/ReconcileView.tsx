@@ -16,33 +16,33 @@ const ReconcileView: React.FC = () => {
   
   return (
     <div data-testid="reconcile-view" className="p-6">
-      <h2 className="text-xl font-semibold mb-4">Reconcile</h2>
+              <h2>Reconcile</h2>
       
       {/* Settlement Variance KPI */}
       <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6">
-        <h3 className="text-lg font-medium mb-4">Settlement Variance</h3>
+        <h3 className="mb-4">Settlement Variance</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <p className="text-sm text-gray-500">Settlement Variance %</p>
-            <p className="text-2xl font-bold text-red-600">
+            <p className="text-red-600 text-2xl font-bold">
               {formatPercent(summary.variancePct)}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-500">Total Net Sales</p>
-            <p className="text-2xl font-bold text-blue-600">
+            <p className="text-blue-600 text-2xl font-bold">
               {formatINR(summary.totalNetSales)}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-500">Expected Fees</p>
-            <p className="text-2xl font-bold text-green-600">
+            <p className="text-green-600 text-2xl font-bold">
               {formatINR(summary.totalExpectedFees)}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-500">Settlement Fees</p>
-            <p className="text-2xl font-bold text-purple-600">
+            <p className="text-purple-600 text-2xl font-bold">
               {formatINR(summary.totalSettlementFees)}
             </p>
           </div>
@@ -52,7 +52,7 @@ const ReconcileView: React.FC = () => {
       {/* Reconciliation Table */}
       <div className="bg-white rounded-lg border border-gray-200">
         <div className="px-4 py-3 border-b border-gray-200">
-          <h3 className="text-lg font-medium">Reconciliation Details</h3>
+          <h3>Reconciliation Details</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -128,7 +128,7 @@ const ReconcileView: React.FC = () => {
           <div className="rounded-xl border border-black/10 bg-white p-6 text-center">
             <div className="text-lg font-semibold mb-1">No reconciliation data</div>
             <p className="text-black/60 mb-4">Import orders and settlements to see results.</p>
-            <a href="/imports" className="inline-flex items-center px-3 h-9 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">Go to Imports</a>
+            <a href="/imports" className="btn-primary inline-flex items-center px-3 h-9 rounded-md">Go to Imports</a>
           </div>
         )}
       </div>

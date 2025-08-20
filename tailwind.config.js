@@ -8,7 +8,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Indigo/violet/sky gradient for header
+        // Standardized design system colors
         primary: {
           50: '#eef2ff',
           100: '#e0e7ff',
@@ -20,6 +20,14 @@ export default {
           700: '#4338ca',
           800: '#3730a3',
           900: '#312e81',
+        },
+        // Standardized button colors
+        button: {
+          primary: 'rgb(37, 99, 235)',
+          secondary: 'rgba(0, 0, 0, 0)',
+          success: 'rgb(22, 163, 74)',
+          danger: 'rgb(220, 38, 38)',
+          neutral: 'rgb(75, 85, 99)',
         },
         // Badge colors for margins
         margin: {

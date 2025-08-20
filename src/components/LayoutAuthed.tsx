@@ -37,19 +37,29 @@ export default function LayoutAuthed() {
   }, []);
 
   return (
-    <div className="grid min-h-dvh grid-rows-[auto_1fr] [grid-template-columns:var(--sidebar-w,240px)_1fr]">
-      <div className="col-span-2 z-30">
+    <div className="min-h-screen overflow-x-hidden bg-gray-50">
+      {/* Header spans full viewport width */}
+      <header className="relative z-[var(--z-header)] w-full">
+        <div className="decorative-layer absolute inset-0 pointer-events-none" />
         <Header />
+      </header>
+      
+      {/* Main content area with sidebar */}
+      <div className="flex min-h-[calc(100vh-5rem)]">
+        <aside className="shrink-0 h-[calc(100vh-5rem)]">
+          <Sidebar
+            width={effective}
+            collapsed={collapsed}
+            onToggle={() => setCollapsed(v => !v)}
+            onResize={(w) => { setCollapsed(false); setWidth(w); }}
+          />
+        </aside>
+        <main className="flex-1 min-w-0 bg-gray-50">
+          <div className="p-4 sm:p-6 lg:p-8">
+            <Outlet />
+          </div>
+        </main>
       </div>
-      <Sidebar
-        width={effective}
-        collapsed={collapsed}
-        onToggle={() => setCollapsed(v => !v)}
-        onResize={(w) => { setCollapsed(false); setWidth(w); }}
-      />
-      <main className="p-4 sm:p-6 lg:p-8 bg-white/50">
-        <Outlet />
-      </main>
     </div>
   );
 }

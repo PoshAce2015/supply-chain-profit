@@ -3,6 +3,8 @@ import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistor } from './store'
+import GlobalLogoutWire from './GlobalLogoutWire'
+
 
 import LoginView from '../features/users/LoginView'
 import RegisterView from '../features/users/RegisterView'
@@ -26,6 +28,7 @@ import { useSlaEngine } from '../features/sla/useSlaEngine'
 import SLAView from '../features/sla/SLAView'
 import { runSelfTests, SelfTestResult } from './selftest'
 import LayoutPublic from "./LayoutPublic"
+import HomeView from '../features/home/HomeView'
 
 
 
@@ -49,8 +52,9 @@ export default function App() {
 
   return (
     <PersistGate loading={<LoadingSpinner />} persistor={persistor}>
-      <ErrorBoundary>
-        <div className="min-h-screen bg-gray-50">
+        <ErrorBoundary>
+          <GlobalLogoutWire />
+          <div className="min-h-screen bg-gray-50">
           {/* Self-Test Banner */}
           {showSelfTestBanner && (
             <div
@@ -79,6 +83,9 @@ export default function App() {
           
           <Routes>
             {/* Public routes */}
+            <Route element={<LayoutPublic />}>
+              <Route path="/" element={<HomeView />} />
+            </Route>
             <Route element={<RedirectIfAuthed />}>
               <Route element={<LayoutPublic />}>
                 <Route path="/login" element={<LoginView />} />
@@ -104,9 +111,8 @@ export default function App() {
               </Route>
             </Route>
 
-            {/* Root & catchall */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            {/* Catchall */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </ErrorBoundary>

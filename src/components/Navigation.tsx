@@ -56,18 +56,18 @@ export default function Sidebar({ width, collapsed, onToggle, onResize }: Props)
       ref={ref}
       data-testid="sidebar"
       data-collapsed={collapsed}
-      className={`sidebar sidebar-modern border-r border-slate-200/60 relative overflow-hidden ${dragging ? "dragging" : ""}`}
+      className={`sidebar sidebar-modern relative overflow-hidden h-full flex flex-col ${dragging ? "dragging" : ""}`}
       style={{ width }}
       aria-expanded={!collapsed}
       role="navigation"
       aria-label="Main navigation"
     >
       {/* Navigation Header - Logo removed to prevent duplication with header */}
-      <div className="px-4 py-6 border-b border-slate-200/40">
+      <div className="px-4 py-6">
         <div className="flex items-center gap-3">
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <h2 className="text-lg font-bold text-slate-900 truncate">Navigation</h2>
+              <h2 className="text-slate-900 truncate">Navigation</h2>
               <p className="text-xs text-slate-500 truncate">Main menu</p>
             </div>
           )}
@@ -75,7 +75,7 @@ export default function Sidebar({ width, collapsed, onToggle, onResize }: Props)
       </div>
 
       {/* Toggle Button */}
-      <div className="px-3 py-3 border-b border-slate-200/40">
+      <div className="px-3 py-3">
         <button
           data-testid="sidebar-toggle"
           onClick={onToggle}
@@ -95,50 +95,53 @@ export default function Sidebar({ width, collapsed, onToggle, onResize }: Props)
       </div>
 
       {/* Navigation Items */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {NAV.map((item, index) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            data-testid={item.testId}
-            className={({ isActive }) =>
-              `group relative flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
-                isActive 
-                  ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25' 
-                  : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-              } ${
-                hoveredItem === item.to ? 'scale-105' : ''
-              }`
-            }
-            title={collapsed ? item.label : undefined}
-            onMouseEnter={() => setHoveredItem(item.to)}
-            onMouseLeave={() => setHoveredItem(null)}
-            style={{
-              animationDelay: `${index * 50}ms`
-            }}
-          >
-            {/* Active indicator - will be handled by background gradient */}
-            
-            {/* Icon */}
-            <span className={`flex-shrink-0 w-5 h-5 flex items-center justify-center text-base transition-transform duration-200 ${
-              hoveredItem === item.to ? 'scale-110' : ''
-            }`}>
-              {item.icon}
-            </span>
-            
-            {/* Label */}
-            {!collapsed && (
-              <span className="flex-1 truncate transition-all duration-200">
-                {item.label}
-              </span>
-            )}
-            
-            {/* Hover effect */}
-            <div className={`absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-600/10 rounded-lg opacity-0 transition-opacity duration-200 ${
-              hoveredItem === item.to ? 'opacity-100' : ''
-            }`} />
-          </NavLink>
-        ))}
+      <nav className="flex-1 px-3 py-4 overflow-y-auto min-h-0">
+        <ul className="space-y-1 nav-list h-full">
+          {NAV.map((item, index) => (
+            <li key={item.to}>
+              <NavLink
+                to={item.to}
+                data-testid={item.testId}
+                className={({ isActive }) =>
+                  `group relative flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
+                    isActive 
+                      ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25' 
+                      : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                  } ${
+                    hoveredItem === item.to ? 'scale-105' : ''
+                  }`
+                }
+                title={collapsed ? item.label : undefined}
+                onMouseEnter={() => setHoveredItem(item.to)}
+                onMouseLeave={() => setHoveredItem(null)}
+                style={{
+                  animationDelay: `${index * 50}ms`
+                }}
+              >
+                {/* Active indicator - will be handled by background gradient */}
+                
+                {/* Icon */}
+                <span className={`flex-shrink-0 w-5 h-5 flex items-center justify-center text-base transition-transform duration-200 ${
+                  hoveredItem === item.to ? 'scale-110' : ''
+                }`}>
+                  {item.icon}
+                </span>
+                
+                {/* Label */}
+                {!collapsed && (
+                  <span className="flex-1 truncate transition-all duration-200">
+                    {item.label}
+                  </span>
+                )}
+                
+                {/* Hover effect */}
+                <div className={`absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-600/10 rounded-lg opacity-0 transition-opacity duration-200 ${
+                  hoveredItem === item.to ? 'opacity-100' : ''
+                }`} />
+              </NavLink>
+            </li>
+          ))}
+        </ul>
       </nav>
 
       {/* Resize Handle */}

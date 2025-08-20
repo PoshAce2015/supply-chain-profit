@@ -520,7 +520,7 @@ const SLAView: React.FC = () => {
           <div className="py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">SLA Management</h1>
+                <h1>SLA Management</h1>
                 <p className="mt-1 text-sm text-gray-500">
                   Service Level Agreement monitoring and compliance tracking
                 </p>
@@ -547,7 +547,7 @@ const SLAView: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setShowSettings(!showSettings)}
-                  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
+                  className="btn-primary px-4 py-2 text-sm rounded-lg focus:ring-2 focus:ring-blue-500"
                 >
                   Settings
                 </button>
@@ -562,7 +562,7 @@ const SLAView: React.FC = () => {
         {showQuickStats && (
           <section className="mb-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Quick Stats</h2>
+              <h2>Quick Stats</h2>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Filtered Results:</span>
                 <span className="text-sm font-medium text-gray-900">
@@ -575,7 +575,7 @@ const SLAView: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">Filtered Total</p>
-                    <p className="text-2xl font-bold text-gray-900">{quickStats.total}</p>
+                    <p className="text-gray-900 text-2xl font-bold">{quickStats.total}</p>
                   </div>
                   <div className="p-2 bg-blue-100 rounded-lg">
                     <span className="text-blue-600 text-xl">📊</span>
@@ -587,7 +587,7 @@ const SLAView: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">Filtered Red</p>
-                    <p className="text-2xl font-bold text-red-600">{quickStats.red}</p>
+                    <p className="text-red-600 text-2xl font-bold">{quickStats.red}</p>
                   </div>
                   <div className="p-2 bg-red-100 rounded-lg">
                     <span className="text-red-600 text-xl">🚨</span>
@@ -599,7 +599,7 @@ const SLAView: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">Filtered Yellow</p>
-                    <p className="text-2xl font-bold text-yellow-600">{quickStats.yellow}</p>
+                    <p className="text-yellow-600 text-2xl font-bold">{quickStats.yellow}</p>
                   </div>
                   <div className="p-2 bg-yellow-100 rounded-lg">
                     <span className="text-yellow-600 text-xl">⚠️</span>
@@ -611,7 +611,7 @@ const SLAView: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">Unacknowledged</p>
-                    <p className="text-2xl font-bold text-orange-600">{quickStats.unacked}</p>
+                    <p className="text-orange-600 text-2xl font-bold">{quickStats.unacked}</p>
                   </div>
                   <div className="p-2 bg-orange-100 rounded-lg">
                     <span className="text-orange-600 text-xl">⏳</span>
@@ -624,13 +624,13 @@ const SLAView: React.FC = () => {
         
         {/* Priority 1: SLA Overview Section */}
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">SLA Overview</h2>
+          <h2>SLA Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Alerts</p>
-                  <p className="text-2xl font-bold text-gray-900">{slaStats.total}</p>
+                  <p className="text-gray-900 text-2xl font-bold">{slaStats.total}</p>
                 </div>
                 <div className="p-2 bg-blue-100 rounded-lg">
                   <span className="text-blue-600 text-xl">📊</span>
@@ -642,7 +642,7 @@ const SLAView: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Red Alerts</p>
-                  <p className="text-2xl font-bold text-red-600">{slaStats.red}</p>
+                  <p className="text-red-600 text-2xl font-bold">{slaStats.red}</p>
                 </div>
                 <div className="p-2 bg-red-100 rounded-lg">
                   <span className="text-red-600 text-xl">🚨</span>
@@ -654,7 +654,7 @@ const SLAView: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Yellow Alerts</p>
-                  <p className="text-2xl font-bold text-yellow-600">{slaStats.yellow}</p>
+                  <p className="text-yellow-600 text-2xl font-bold">{slaStats.yellow}</p>
                 </div>
                 <div className="p-2 bg-yellow-100 rounded-lg">
                   <span className="text-yellow-600 text-xl">⚠️</span>
@@ -666,7 +666,7 @@ const SLAView: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600">Compliance Rate</p>
-                  <p className="text-2xl font-bold text-green-600">{slaStats.complianceRate.toFixed(1)}%</p>
+                  <p className="text-green-600 text-2xl font-bold">{slaStats.complianceRate.toFixed(1)}%</p>
                 </div>
                 <div className="p-2 bg-green-100 rounded-lg">
                   <span className="text-green-600 text-xl">✅</span>
@@ -705,8 +705,8 @@ const SLAView: React.FC = () => {
                     onClick={() => setViewMode('table')}
                     className={`px-3 py-1 text-sm ${
                       viewMode === 'table' 
-                        ? 'bg-blue-600 text-white' 
-                        : 'bg-white text-gray-700 hover:bg-gray-50'
+                        ? 'btn-primary' 
+                        : 'btn-secondary'
                     }`}
                   >
                     Table
@@ -715,8 +715,8 @@ const SLAView: React.FC = () => {
                     onClick={() => setViewMode('cards')}
                     className={`px-3 py-1 text-sm ${
                       viewMode === 'cards' 
-                        ? 'bg-blue-600 text-white' 
-                        : 'bg-white text-gray-700 hover:bg-gray-50'
+                        ? 'btn-primary' 
+                        : 'btn-secondary'
                     }`}
                   >
                     Cards
@@ -753,7 +753,7 @@ const SLAView: React.FC = () => {
               <div className="relative">
                 <button
                   onClick={() => setShowExportOptions(!showExportOptions)}
-                  className="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500"
+                  className="btn-success px-4 py-2 text-sm rounded-lg focus:ring-2 focus:ring-green-500"
                 >
                   Export
                 </button>
@@ -848,7 +848,7 @@ const SLAView: React.FC = () => {
                   <button
                     onClick={handleBulkAcknowledge}
                     disabled={isLoading}
-                    className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                    className="btn-primary px-4 py-2 text-sm rounded-lg disabled:opacity-50"
                   >
                     {isLoading ? 'Processing...' : 'Acknowledge All'}
                   </button>
@@ -873,7 +873,7 @@ const SLAView: React.FC = () => {
         {/* Priority 1: SLA Alerts Section */}
         <section className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">SLA Alerts</h2>
+            <h2>SLA Alerts</h2>
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-600">
                 Showing {filteredAndSortedAlerts.length} of {alerts.length} alerts
@@ -1073,10 +1073,10 @@ const SLAView: React.FC = () => {
         {/* Priority 3: Advanced Features Toggle */}
         <section className="mb-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">Advanced Features</h2>
+            <h2>Advanced Features</h2>
             <button
               onClick={() => setShowAdvancedFeatures(!showAdvancedFeatures)}
-              className="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:ring-2 focus:ring-purple-500"
+                              className="btn-neutral px-4 py-2 text-sm rounded-lg focus:ring-2 focus:ring-purple-500"
             >
               {showAdvancedFeatures ? 'Hide Advanced' : 'Show Advanced'}
             </button>
@@ -1102,7 +1102,7 @@ const SLAView: React.FC = () => {
                   <div className="space-y-4">
                     <button
                       onClick={generateAnalytics}
-                      className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      className="btn-primary w-full px-4 py-2 rounded-lg"
                     >
                       Generate Analytics
                     </button>
@@ -1138,7 +1138,7 @@ const SLAView: React.FC = () => {
                   <div className="space-y-4">
                     <button
                       onClick={addWorkflowRule}
-                      className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                      className="btn-success w-full px-4 py-2 rounded-lg"
                     >
                       Add Workflow Rule
                     </button>
@@ -1189,7 +1189,7 @@ const SLAView: React.FC = () => {
                   <div className="space-y-4">
                     <button
                       onClick={measurePerformance}
-                      className="w-full px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+                      className="btn-neutral w-full px-4 py-2 rounded-lg"
                     >
                       Measure Performance
                     </button>
@@ -1230,7 +1230,7 @@ const SLAView: React.FC = () => {
                   <div className="space-y-4">
                     <button
                       onClick={validateData}
-                      className="w-full px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
+                      className="btn-secondary w-full px-4 py-2 rounded-lg"
                     >
                       Validate Data
                     </button>
@@ -1265,7 +1265,7 @@ const SLAView: React.FC = () => {
                   <div className="space-y-4">
                     <button
                       onClick={generatePredictiveInsights}
-                      className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                      className="btn-neutral w-full px-4 py-2 rounded-lg"
                     >
                       Generate Insights
                     </button>
@@ -1301,7 +1301,7 @@ const SLAView: React.FC = () => {
         {/* Priority 2: Keyboard Shortcuts Help */}
         {showKeyboardShortcuts && (
           <section className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Keyboard Shortcuts</h2>
+                          <h2>Keyboard Shortcuts</h2>
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -1343,7 +1343,7 @@ const SLAView: React.FC = () => {
         {/* Priority 1: SLA Settings Section */}
         {showSettings && (
           <section className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">SLA Settings</h2>
+                          <h2>SLA Settings</h2>
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -1409,7 +1409,7 @@ const SLAView: React.FC = () => {
         {/* Priority 1: Help Section */}
         {showHelp && (
           <section className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">SLA Help & Documentation</h2>
+                          <h2>SLA Help & Documentation</h2>
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <div className="prose max-w-none">
                 <h3 className="text-lg font-medium text-gray-900 mb-3">Understanding SLA Alerts</h3>

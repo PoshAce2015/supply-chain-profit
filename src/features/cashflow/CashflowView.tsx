@@ -535,7 +535,7 @@ const CashflowView: React.FC = () => {
       role="main"
       aria-label="Cashflow Analysis Dashboard"
     >
-      <h1 className="text-xl font-semibold mb-4">Cashflow</h1>
+              <h1>Cashflow</h1>
       
       {/* Empty State */}
       {events.length === 0 && orders.length === 0 && uspos.length === 0 && (
@@ -547,7 +547,7 @@ const CashflowView: React.FC = () => {
           </p>
           <button
             onClick={() => window.location.href = '/imports'}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            className="btn-primary px-4 py-2 rounded-md transition-colors"
           >
             Import Data
           </button>
@@ -579,7 +579,7 @@ const CashflowView: React.FC = () => {
               </button>
               <button
                 onClick={() => setShowScenarios(!showScenarios)}
-                className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                className="btn-primary px-3 py-1 text-sm rounded"
                 aria-label="Toggle scenarios"
               >
                 📊 Scenarios
@@ -587,28 +587,28 @@ const CashflowView: React.FC = () => {
               <button
                 onClick={handleExport}
                 disabled={!result}
-                className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 disabled:opacity-50"
+                className="btn-success px-3 py-1 text-sm rounded disabled:opacity-50"
                 aria-label="Export data"
               >
                 📥 Export
               </button>
               <button
                 onClick={() => setShowShortcuts(!showShortcuts)}
-                className="px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200"
+                className="btn-neutral px-3 py-1 text-sm rounded"
                 aria-label="Show shortcuts"
               >
                 ⌨️ Shortcuts
               </button>
               <button
                 onClick={() => setShowAdvancedCharts(!showAdvancedCharts)}
-                className="px-3 py-1 text-sm bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200"
+                className="btn-primary px-3 py-1 text-sm rounded"
                 aria-label="Toggle advanced charts"
               >
                 📊 Advanced
               </button>
               <button
                 onClick={() => setShowHistorical(!showHistorical)}
-                className="px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200"
+                className="btn-secondary px-3 py-1 text-sm rounded"
                 aria-label="Show historical comparison"
               >
                 📈 History
@@ -802,7 +802,7 @@ const CashflowView: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm opacity-90">Runway Days</p>
-                <p className="text-2xl font-bold">{kpiMetrics.runwayDays}</p>
+                <p className="text-gray-900 text-2xl font-bold">{kpiMetrics.runwayDays}</p>
               </div>
               <div className="text-3xl">⏰</div>
             </div>
@@ -816,7 +816,7 @@ const CashflowView: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm opacity-90">Ending Balance</p>
-                <p className="text-2xl font-bold">{formatINR(kpiMetrics.endingBalance)}</p>
+                <p className="text-gray-900 text-2xl font-bold">{formatINR(kpiMetrics.endingBalance)}</p>
               </div>
               <div className="text-3xl">💰</div>
             </div>
@@ -830,7 +830,7 @@ const CashflowView: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm opacity-90">Total Inflow</p>
-                <p className="text-2xl font-bold">{formatINR(kpiMetrics.totalInflow)}</p>
+                <p className="text-gray-900 text-2xl font-bold">{formatINR(kpiMetrics.totalInflow)}</p>
               </div>
               <div className="text-3xl">📥</div>
             </div>
@@ -844,7 +844,7 @@ const CashflowView: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm opacity-90">Total Outflow</p>
-                <p className="text-2xl font-bold">{formatINR(kpiMetrics.totalOutflow)}</p>
+                <p className="text-gray-900 text-2xl font-bold">{formatINR(kpiMetrics.totalOutflow)}</p>
               </div>
               <div className="text-3xl">📤</div>
             </div>
@@ -937,11 +937,11 @@ const CashflowView: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-500">Runway Days</p>
-                <p className="text-2xl font-bold text-red-600">{result.runwayDays}</p>
+                <p className="text-red-600 text-2xl font-bold">{result.runwayDays}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Ending Balance</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-green-600 text-2xl font-bold">
                   {formatINR(result.daily[result.daily.length - 1]?.balance || 0)}
                 </p>
               </div>

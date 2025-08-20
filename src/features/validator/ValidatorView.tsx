@@ -465,24 +465,24 @@ const ValidatorView: React.FC = () => {
       role="main" 
       aria-label="Data Validation Dashboard"
     >
-      <h1 className="text-2xl font-bold mb-6">Data Validator</h1>
+              <h1>Data Validator</h1>
       
       {/* Empty State */}
       {parsedRows.length === 0 && validationResults.length === 0 && !isParsing && !isLoading && (
         <div className="bg-white p-8 rounded-lg border border-gray-200 text-center">
           <div className="text-6xl mb-4">📊</div>
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">No Data to Validate</h3>
+          <h3 className="text-gray-700 mb-2">No Data to Validate</h3>
           <p className="text-gray-500 mb-6">Upload a CSV file or paste your Amazon data to start validation</p>
           <div className="space-x-4">
             <button
               onClick={() => document.getElementById('file-upload')?.click()}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="btn-primary px-6 py-3 rounded-lg transition-colors"
             >
               📁 Upload CSV File
             </button>
             <button
               onClick={() => setInputText('ASIN,SKU,Category,SellingPriceINR,ReferralPercent\nB08N5WRWNW,SAMPLE-SKU,Electronics,1500,8.5')}
-              className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              className="btn-neutral px-6 py-3 rounded-lg transition-colors"
             >
               🧪 Load Sample Data
             </button>
@@ -492,7 +492,7 @@ const ValidatorView: React.FC = () => {
       
       {/* Input Section */}
       <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-        <h3 className="text-lg font-medium mb-4">Data Input</h3>
+        <h3 className="mb-4">Data Input</h3>
         
         {/* File Upload Area */}
         <div
@@ -551,7 +551,7 @@ const ValidatorView: React.FC = () => {
           <button
             onClick={handleParse}
             disabled={!inputText.trim() || isParsing}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center"
+            className="btn-primary px-4 py-2 rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center"
           >
             {isParsing ? (
               <>
@@ -565,7 +565,7 @@ const ValidatorView: React.FC = () => {
           <button
             onClick={handleValidate}
             disabled={parsedRows.length === 0 || isLoading}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center"
+            className="btn-success px-4 py-2 rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center"
           >
             {isLoading ? (
               <>
@@ -587,43 +587,43 @@ const ValidatorView: React.FC = () => {
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setShowSettings(!showSettings)}
-                className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="btn-primary px-3 py-1 text-sm rounded"
               >
                 ⚙️ Settings
               </button>
               <button
                 onClick={() => setShowExport(!showExport)}
-                className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                className="btn-success px-3 py-1 text-sm rounded"
               >
                 📊 Export
               </button>
               <button
                 onClick={() => setShowHistory(!showHistory)}
-                className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700"
+                className="btn-neutral px-3 py-1 text-sm rounded"
               >
                 📈 History
               </button>
               <button
                 onClick={() => setShowShortcuts(!showShortcuts)}
-                className="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
+                className="btn-secondary px-3 py-1 text-sm rounded"
               >
                 ⌨️ Shortcuts
               </button>
               <button
                 onClick={() => setShowCharts(!showCharts)}
-                className="px-3 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                className="btn-primary px-3 py-1 text-sm rounded"
               >
                 📊 Charts
               </button>
               <button
                 onClick={() => setShowCustomRules(!showCustomRules)}
-                className="px-3 py-1 text-sm bg-orange-600 text-white rounded hover:bg-orange-700"
+                className="btn-secondary px-3 py-1 text-sm rounded"
               >
                 ⚡ Custom Rules
               </button>
               <button
                 onClick={() => setShowPerformance(!showPerformance)}
-                className="px-3 py-1 text-sm bg-teal-600 text-white rounded hover:bg-teal-700"
+                className="btn-neutral px-3 py-1 text-sm rounded"
               >
                 🚀 Performance
               </button>
@@ -997,7 +997,7 @@ const ValidatorView: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90">Total Rows</p>
-                  <p className="text-2xl font-bold">{dashboardMetrics.totalRows}</p>
+                  <p className="text-gray-900 text-2xl font-bold">{dashboardMetrics.totalRows}</p>
                 </div>
                 <div className="text-2xl">📊</div>
               </div>
@@ -1008,7 +1008,7 @@ const ValidatorView: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90">Errors</p>
-                  <p className="text-2xl font-bold">{dashboardMetrics.errors}</p>
+                  <p className="text-red-600 text-2xl font-bold">{dashboardMetrics.errors}</p>
                   <p className="text-xs opacity-90">{dashboardMetrics.errorRate.toFixed(1)}%</p>
                 </div>
                 <div className="text-2xl">❌</div>
@@ -1020,7 +1020,7 @@ const ValidatorView: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90">Warnings</p>
-                  <p className="text-2xl font-bold">{dashboardMetrics.warnings}</p>
+                  <p className="text-yellow-600 text-2xl font-bold">{dashboardMetrics.warnings}</p>
                   <p className="text-xs opacity-90">{dashboardMetrics.warningRate.toFixed(1)}%</p>
                 </div>
                 <div className="text-2xl">⚠️</div>
@@ -1032,7 +1032,7 @@ const ValidatorView: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90">Info</p>
-                  <p className="text-2xl font-bold">{dashboardMetrics.info}</p>
+                  <p className="text-blue-600 text-2xl font-bold">{dashboardMetrics.info}</p>
                 </div>
                 <div className="text-2xl">ℹ️</div>
               </div>
@@ -1043,7 +1043,7 @@ const ValidatorView: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90">Clean</p>
-                  <p className="text-2xl font-bold">{dashboardMetrics.clean}</p>
+                  <p className="text-green-600 text-2xl font-bold">{dashboardMetrics.clean}</p>
                 </div>
                 <div className="text-2xl">✅</div>
               </div>

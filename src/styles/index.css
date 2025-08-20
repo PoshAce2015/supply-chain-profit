@@ -13,20 +13,144 @@
   
   body {
     @apply bg-gray-50 text-gray-900;
+    margin: 0;
+    padding: 0;
+  }
+
+  #root {
+    min-height: 100vh;
+    width: 100%;
   }
 }
 
 @layer components {
+  /* ===== STANDARDIZED HEADING HIERARCHY ===== */
+  h1 {
+    @apply text-3xl font-bold text-gray-900;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  
+  h2 {
+    @apply text-2xl font-semibold text-gray-900;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  
+  h3 {
+    @apply text-xl font-semibold text-gray-900;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  
+  h4 {
+    @apply text-lg font-medium text-gray-900;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  
+  h5 {
+    @apply text-base font-medium text-gray-900;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  
+  h6 {
+    @apply text-sm font-medium text-gray-900;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* ===== STANDARDIZED BUTTON COLOR SYSTEM ===== */
   .btn-primary {
-    @apply bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:from-indigo-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors;
+    @apply bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200;
+    background-color: rgb(37, 99, 235);
+    transform: translateY(0);
+  }
+  
+  .btn-primary:hover {
+    background-color: rgb(29, 78, 216);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  }
+  
+  .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
   }
   
   .btn-secondary {
-    @apply bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors;
+    @apply text-gray-700 border border-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200;
+    background-color: rgba(0, 0, 0, 0);
+    transform: translateY(0);
+  }
+  
+  .btn-secondary:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn-secondary:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+  
+  .btn-success {
+    @apply text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200;
+    background-color: rgb(22, 163, 74);
+    transform: translateY(0);
+  }
+  
+  .btn-success:hover {
+    background-color: rgb(21, 128, 61);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+  }
+  
+  .btn-success:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(22, 163, 74, 0.2);
   }
   
   .btn-danger {
-    @apply bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors;
+    @apply text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200;
+    background-color: rgb(220, 38, 38);
+    transform: translateY(0);
+  }
+  
+  .btn-danger:hover {
+    background-color: rgb(185, 28, 28);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+  }
+  
+  .btn-danger:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.2);
+  }
+  
+  .btn-neutral {
+    @apply text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200;
+    background-color: rgb(75, 85, 99);
+    transform: translateY(0);
+  }
+  
+  .btn-neutral:hover {
+    background-color: rgb(55, 65, 81);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(75, 85, 99, 0.25);
+  }
+  
+  .btn-neutral:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(75, 85, 99, 0.2);
   }
   
   .badge-margin-green {
@@ -52,7 +176,14 @@
 
   
   .kpi-tile {
-    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-4;
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-4 transition-all duration-300;
+    transform: translateY(0);
+  }
+  
+  .kpi-tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    border-color: rgba(59, 130, 246, 0.2);
   }
   
   .tab-active {
@@ -73,6 +204,9 @@
 /* Header gradient (enhanced) */
 .header-gradient{
   background-image: linear-gradient(90deg,#7c3aed 0%,#6366f1 50%,#06b6d4 100%);
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 .header-gradient::before{
   content:"";
@@ -93,20 +227,13 @@
 .header-gradient::before{ z-index:0; pointer-events:none; }
 .header-inner{ position:relative; z-index:10; }
 
-/* ensure dropdown panels float above header */
-[data-testid="user-menu-panel"],
-[data-testid="alerts-panel"]{
-  position:absolute;
-  right:0;
-  top:calc(100% + .5rem);
-  z-index:60;
-}
 
-/* if your components use a generic class, this also helps */
-.popover-panel{ position:absolute; right:0; top:calc(100% + .5rem); z-index:60; }
 
 /* === Sidebar skin & variables ============================================ */
 :root{
+  --z-header: 30;
+  --z-popover: 1000;
+  --z-modal: 1100;
   --sidebar-w: 240px;
   --sidebar-collapsed-w: 64px;
   --sidebar-min: 200px;
@@ -117,7 +244,6 @@
   background:
     radial-gradient(1200px 400px at -200px -200px, rgba(255,255,255,0.25), transparent 60%),
     linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(59,130,246,0.06) 40%, rgba(14,165,233,0.06) 100%);
-  border-right: 1px solid rgba(15,23,42,0.06);
   backdrop-filter: saturate(120%);
 }
 
@@ -129,12 +255,7 @@
 .sidebar .resizer { width: 4px; cursor: col-resize; }
 .sidebar.dragging * { user-select: none !important; }
 
-:root{
-  --z-header: 30;
-  --z-popover: 60;
-  --sidebar-w: 240px;
-  --sidebar-collapsed-w: 64px;
-}
+
 
 /* Header layers must never block clicks */
 .header-gradient,
@@ -143,12 +264,7 @@
 .header-gradient .header-content,
 .header-gradient .header-actions { pointer-events: auto; }
 
-/* Popover panel above everything */
-.popover-panel {
-  position: fixed;
-  z-index: var(--z-popover);
-  pointer-events: auto;
-}
+
 
 /* Sidebar consistency */
 .sidebar { width: var(--sidebar-w); z-index: 20; }
@@ -164,32 +280,144 @@
   backdrop-filter: saturate(115%);
 }
 
+/* Global width safety */
+html, body, #root { 
+  width: 100%; 
+  max-width: 100%; 
+  overflow-x: hidden; 
+  margin: 0;
+  padding: 0;
+}
+
+/* Responsive enhancements */
+.container-responsive {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-responsive {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-responsive {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Table responsive wrapper */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  min-width: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive table {
+  width: 100%;
+  min-width: 600px;
+}
+
+/* Grid responsive fixes */
+.grid-responsive {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .grid-responsive {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .grid-responsive {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1025px) {
+  .grid-responsive {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+/* Text truncation utilities */
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-truncate-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.text-truncate-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
 /* Test stability helper (used by Playwright) */
 .no-anim *, .no-anim *::before, .no-anim *::after { transition:none!important; animation:none!important; }
 
-:root{
-  --z-header: 30;
-  --z-popover: 60;
+
+
+/* Header styling */
+header[data-testid="app-header"] { 
+  position: sticky; 
+  top: 0; 
+  z-index: var(--z-header); 
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  left: 0;
+  right: 0;
 }
 
-/* Header should never block clicks with its decorative layers */
+/* Ensure header content spans full width */
+.app-header {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Responsive adjustments for collapsed sidebar */
+@media (max-width: 768px) {
+  .app-header {
+    margin-left: calc(-1 * var(--sidebar-collapsed-w, 64px));
+    padding-left: var(--sidebar-collapsed-w, 64px);
+  }
+}
+
+/* src/styles/index.css */
+header .decorative-layer,
+header .gradient,
+header .shine { pointer-events: none; }
+/* (Popover uses fixed z-index; do not add competing popover rules) */
+
+/* The actual header content must accept clicks and be above the ink */
 .app-header,
-[data-role="app-header"]{
-  position: sticky;
-  top: 0;
+.header-content,
+.header-actions {
+  position: relative;
   z-index: var(--z-header);
 }
-.app-header *[data-decorative="true"],
-[data-role="app-header"] *[data-decorative="true"]{
-  pointer-events: none;
-}
 
-/* Popovers always above content */
-.popover-panel{
-  position: fixed;
-  z-index: var(--z-popover);
-  box-shadow: 0 12px 30px rgba(0,0,0,.18);
-}
+
 
 /* Sidebar nav item height consistency */
 .nav-item{ height: 44px; }
@@ -202,27 +430,13 @@
     rgba(248, 250, 252, 0.95) 100%
   );
   backdrop-filter: blur(10px);
-  border-right: 1px solid rgba(226, 232, 240, 0.6);
   box-shadow: 
     0 1px 3px 0 rgba(0, 0, 0, 0.1), 
     0 1px 2px 0 rgba(0, 0, 0, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
-.sidebar-modern::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(255, 255, 255, 0.8) 50%, 
-    transparent 100%
-  );
-  z-index: 1;
-}
+/* Removed top border line */
 
 /* Sidebar navigation items */
 .sidebar-modern nav {
@@ -317,15 +531,221 @@
   border-radius: 8px;
 }
 
+/* Micro-interactions and polish */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Loading state animations */
+.loading-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Content area fade-in */
+.page-content {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* Card entrance animations */
+.card-enter {
+  animation: fadeInUp 0.3s ease-out;
+  animation-fill-mode: both;
+}
+
+.card-enter:nth-child(1) { animation-delay: 0s; }
+.card-enter:nth-child(2) { animation-delay: 0.05s; }
+.card-enter:nth-child(3) { animation-delay: 0.1s; }
+.card-enter:nth-child(4) { animation-delay: 0.15s; }
+.card-enter:nth-child(5) { animation-delay: 0.2s; }
+.card-enter:nth-child(6) { animation-delay: 0.25s; }
+
+/* Form input enhancements */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus {
+  transform: scale(1.01);
+  transition: all 0.2s ease-out;
+}
+
+/* Table row hover effects */
+tbody tr:hover {
+  background-color: rgba(59, 130, 246, 0.02);
+  transform: translateX(2px);
+  transition: all 0.15s ease-out;
+}
+
+/* Success/Error state animations */
+@keyframes successPulse {
+  0% { background-color: rgba(34, 197, 94, 0.1); }
+  50% { background-color: rgba(34, 197, 94, 0.2); }
+  100% { background-color: rgba(34, 197, 94, 0.1); }
+}
+
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.success-flash {
+  animation: successPulse 0.6s ease-out;
+}
+
+.error-shake {
+  animation: errorShake 0.5s ease-out;
+}
+
+/* Enhanced focus states */
+button:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.btn-success:focus-visible,
+.btn-danger:focus-visible,
+.btn-neutral:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.6);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+/* Enhanced loading spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin 2s linear infinite;
+}
+
+/* Improved scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
 /* Reduced motion support for sidebar */
 @media (prefers-reduced-motion: reduce) {
   .sidebar-modern,
-  .sidebar-modern nav > * {
-    animation: none;
-    transition: none;
+  .sidebar-modern nav > *,
+  .page-content,
+  .card-enter,
+  .kpi-tile,
+  .btn-primary,
+  .btn-secondary,
+  .btn-success,
+  .btn-danger,
+  .btn-neutral,
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  textarea,
+  tbody tr {
+    animation: none !important;
+    transition: none !important;
   }
   
-  .sidebar-modern .group:hover {
-    transform: none;
+  .sidebar-modern .group:hover,
+  .kpi-tile:hover,
+  .btn-primary:hover,
+  .btn-secondary:hover,
+  .btn-success:hover,
+  .btn-danger:hover,
+  .btn-neutral:hover,
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  input[type="number"]:focus,
+  input[type="date"]:focus,
+  select:focus,
+  textarea:focus,
+  tbody tr:hover {
+    transform: none !important;
   }
+}
+
+/* --- Sidebar: remove the trailing line after the last nav item (Settings) --- */
+.sidebar .nav-list > li:last-child,
+.sidebar .nav-list > li:last-child a,
+.sidebar .nav-list > li:last-child button {
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+/* If the list uses Tailwind `divide-y` (draws a top border between siblings),
+   this prevents the final divider from showing after the last item. */
+.sidebar .nav-list > :not([hidden]) ~ :not([hidden]):last-child {
+  border-top-width: 0 !important;
+}
+
+/* In case a pseudo-element is used for the divider */
+.sidebar .nav-list > li:last-child::after {
+  content: none !important;
+}
+
+/* --- Sidebar: Full height navigation --- */
+.sidebar {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.sidebar .nav-list {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  min-height: 0 !important;
+}
+
+.sidebar .nav-list > li {
+  flex-shrink: 0 !important;
 }

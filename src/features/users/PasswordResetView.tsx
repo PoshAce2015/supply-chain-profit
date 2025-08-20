@@ -335,7 +335,7 @@ export default function PasswordResetView() {
               </svg>
             </div>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">
+          <h1 className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">
             {step === "email" && "Reset Password"}
             {step === "token" && "Enter Reset Code"}
             {step === "password" && "Set New Password"}

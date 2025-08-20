@@ -51,7 +51,7 @@ const AnalyticsView: React.FC = () => {
         setAnalytics(computedAnalytics)
         setIsLoading(false)
       } catch (err) {
-        setError('Failed to compute analytics data')
+        setError('Unable to compute analytics data. Please check your data imports and try again.')
         setIsLoading(false)
       }
     }, 500)
@@ -399,7 +399,7 @@ const AnalyticsView: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           {/* Priority 1: Page Identity */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
+            <h1>Analytics Dashboard</h1>
             <p className="text-lg text-gray-600">
               Comprehensive supply chain performance analytics and insights
             </p>
@@ -407,9 +407,10 @@ const AnalyticsView: React.FC = () => {
           
           {/* Loading State */}
           <div className="flex items-center justify-center h-64">
-            <div className="text-center">
+            <div className="text-center page-content">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading analytics data...</p>
+              <p className="text-gray-600 mb-2">Loading analytics data...</p>
+              <p className="text-sm text-gray-500">Processing your supply chain performance metrics</p>
             </div>
           </div>
         </div>
@@ -424,7 +425,7 @@ const AnalyticsView: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           {/* Priority 1: Page Identity */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
+            <h1>Analytics Dashboard</h1>
             <p className="text-lg text-gray-600">
               Comprehensive supply chain performance analytics and insights
             </p>
@@ -464,7 +465,7 @@ const AnalyticsView: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           {/* Priority 1: Page Identity */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
+            <h1>Analytics Dashboard</h1>
             <p className="text-lg text-gray-600">
               Comprehensive supply chain performance analytics and insights
             </p>
@@ -500,7 +501,7 @@ const AnalyticsView: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         {/* Priority 1: Page Identity */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
+          <h1>Analytics Dashboard</h1>
           <p className="text-lg text-gray-600">
             Comprehensive supply chain performance analytics and insights
           </p>
@@ -528,18 +529,24 @@ const AnalyticsView: React.FC = () => {
               
               {dateRange === 'custom' && (
                 <div className="flex items-center gap-2">
+                  <label htmlFor="custom-start-date" className="sr-only">Start Date</label>
                   <input
+                    id="custom-start-date"
                     type="date"
                     value={customStartDate}
                     onChange={(e) => setCustomStartDate(e.target.value)}
                     className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+                    aria-label="Custom start date"
                   />
                   <span className="text-gray-500">to</span>
+                  <label htmlFor="custom-end-date" className="sr-only">End Date</label>
                   <input
+                    id="custom-end-date"
                     type="date"
                     value={customEndDate}
                     onChange={(e) => setCustomEndDate(e.target.value)}
                     className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+                    aria-label="Custom end date"
                   />
                 </div>
               )}
@@ -653,7 +660,7 @@ const AnalyticsView: React.FC = () => {
         {showTrends && (
           <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Trend Analysis</h2>
+              <h2>Trend Analysis</h2>
               <select
                 value={trendPeriod}
                 onChange={(e) => setTrendPeriod(e.target.value as any)}
@@ -697,7 +704,7 @@ const AnalyticsView: React.FC = () => {
         {showCharts && (
           <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">Data Visualization</h2>
+              <h2>Data Visualization</h2>
               <div className="flex items-center gap-3">
                 <select
                   value={chartType}
@@ -762,7 +769,7 @@ const AnalyticsView: React.FC = () => {
         {showKeyboardShortcuts && (
           <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Keyboard Shortcuts</h2>
+              <h2>Keyboard Shortcuts</h2>
               <button
                 onClick={() => setShowKeyboardShortcuts(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -838,7 +845,7 @@ const AnalyticsView: React.FC = () => {
                   </svg>
                 </div>
               </div>
-              <p className="text-3xl font-bold text-blue-600 mb-2">
+              <p className="text-blue-600 mb-2 text-2xl font-bold">
                 {formatDays(currentAnalytics.segments.in_to_uspo)} days
               </p>
               <p className="text-xs text-gray-500">Average processing time</p>
@@ -861,7 +868,7 @@ const AnalyticsView: React.FC = () => {
                   </svg>
                 </div>
               </div>
-              <p className="text-3xl font-bold text-green-600 mb-2">
+              <p className="text-green-600 mb-2 text-2xl font-bold">
                 {formatDays(currentAnalytics.segments.usship_to_stackry)} days
               </p>
               <p className="text-xs text-gray-500">Average shipping time</p>
@@ -884,7 +891,7 @@ const AnalyticsView: React.FC = () => {
                   </svg>
                 </div>
               </div>
-              <p className="text-3xl font-bold text-yellow-600 mb-2">
+              <p className="text-yellow-600 mb-2 text-2xl font-bold">
                 {formatDays(currentAnalytics.segments.export_to_customs)} days
               </p>
               <p className="text-xs text-gray-500">Average customs clearance</p>
@@ -907,7 +914,7 @@ const AnalyticsView: React.FC = () => {
                   </svg>
                 </div>
               </div>
-              <p className="text-3xl font-bold text-purple-600 mb-2">
+              <p className="text-purple-600 mb-2 text-2xl font-bold">
                 {formatDays(currentAnalytics.segments.delivered_to_payment)} days
               </p>
               <p className="text-xs text-gray-500">Average payment time</p>
@@ -927,7 +934,7 @@ const AnalyticsView: React.FC = () => {
               <svg className="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <h2 className="text-lg font-semibold text-gray-900">Analytics Information</h2>
+              <h2>Analytics Information</h2>
             </div>
             
             {/* Priority 3: Accessibility Controls */}

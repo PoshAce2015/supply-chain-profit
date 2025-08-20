@@ -211,19 +211,19 @@ const HeaderMapper: React.FC<HeaderMapperProps> = ({
         <h6 className="text-sm font-medium text-gray-900 mb-2">Mapping Summary</h6>
         <div className="grid grid-cols-3 gap-4 text-sm">
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-green-600 text-2xl font-bold">
               {headers.filter(h => getMappingStatus(h) === 'mapped').length}
             </div>
             <div className="text-gray-600">Mapped Fields</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-yellow-600">
+            <div className="text-yellow-600 text-2xl font-bold">
               {headers.filter(h => getMappingStatus(h) === 'custom').length}
             </div>
             <div className="text-gray-600">Custom Fields</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-600">
+            <div className="text-gray-600 text-2xl font-bold">
               {headers.filter(h => getMappingStatus(h) === 'unmapped').length}
             </div>
             <div className="text-gray-600">Unmapped Fields</div>

@@ -1,65 +1,73 @@
-import { useEffect, useLayoutEffect, useState } from "react"
-import { createPortal } from "react-dom"
+// src/components/ui/Popover.tsx
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 type Props = {
-  anchor: HTMLElement | null
-  open: boolean
-  onClose: () => void
-  children: React.ReactNode
-  maxWidth?: number
-  alignRight?: boolean
-}
+  button: (p:{ref: React.RefObject<HTMLButtonElement>, toggle: ()=>void}) => React.ReactNode;
+  children: React.ReactNode;
+  align?: "start" | "end";
+};
 
-export default function Popover({ anchor, open, onClose, children, maxWidth = 320, alignRight = true }: Props){
-  const [style, setStyle] = useState<React.CSSProperties>({ visibility: "hidden" })
+const Z_OVERLAY = 9999;
+const Z_PANEL   = 10000;
 
-  useLayoutEffect(()=>{
-    if(!open || !anchor) return
-    const place = () => {
-      const r = anchor.getBoundingClientRect()
-      const gap = 6
-      const w = Math.min(maxWidth, Math.max(240, anchor.offsetWidth))
-      let left = alignRight ? (r.right - w) : r.left
-      left = Math.max(8, Math.min(left, innerWidth - w - 8)) // clamp to viewport
-      const top = Math.min(r.bottom + gap, innerHeight - 8)
-      setStyle({ top, left, width: w, visibility: "visible" })
-    }
-    place()
-    const onR = () => place()
-    addEventListener("scroll", onR, true)
-    addEventListener("resize", onR)
-    return () => {
-      removeEventListener("scroll", onR, true)
-      removeEventListener("resize", onR)
-    }
-  }, [open, anchor, maxWidth, alignRight])
+export default function Popover({ button, children, align="end" }: Props) {
+  const [open, setOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const toggle = () => setOpen(v => !v);
 
-  useEffect(()=>{
-    if(!open) return
-    const onDown = (e: Event) => {
-      const t = e.target as Node
-      if (anchor && (t === anchor || anchor.contains(t))) return
-      const panel = document.querySelector('[data-popover-panel="true"]')
-      if (panel && panel.contains(t)) return
-      onClose()
-    }
-    const onKey = (e: KeyboardEvent) => { if(e.key === "Escape") onClose() }
-    document.addEventListener("pointerdown", onDown, true)
-    document.addEventListener("keydown", onKey)
-    return () => {
-      document.removeEventListener("pointerdown", onDown, true)
-      document.removeEventListener("keydown", onKey)
-    }
-  }, [open, onClose, anchor])
+  useLayoutEffect(() => {
+    if (!open || !btnRef.current || !panelRef.current) return;
+    const br = btnRef.current.getBoundingClientRect();
+    const panel = panelRef.current;
+    const pad = 8;
+    const leftBase = align === "end" ? br.right - panel.offsetWidth : br.left;
+    const left = Math.max(pad, Math.min(leftBase, window.innerWidth - panel.offsetWidth - pad));
+    const top  = Math.max(pad, Math.min(br.bottom + pad, window.innerHeight - panel.offsetHeight - pad));
+    panel.style.left = `${left}px`;
+    panel.style.top  = `${top}px`;
+  }, [open, align]);
 
-  if(!open) return null
-  return createPortal(
-    <div className="popover-panel rounded-xl bg-white/95 ring-1 ring-black/10 backdrop-blur"
-         style={style}
-         data-popover-panel="true"
-         role="dialog">
-      {children}
-    </div>,
-    document.body
-  )
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  return (
+    <>
+      {button({ ref: btnRef, toggle })}
+      {open && createPortal(
+        <>
+          <div
+            data-testid="popover-overlay"
+            style={{ position: "fixed", inset: 0, zIndex: Z_OVERLAY, background: "transparent" }}
+            onPointerDown={() => setOpen(false)}
+          />
+          <div
+            ref={panelRef}
+            data-testid="popover-panel"
+            style={{
+              position: "fixed",
+              zIndex: Z_PANEL,
+              background: "#fff",
+              borderRadius: 12,
+              boxShadow: "0 20px 40px rgba(0,0,0,.12)",
+              maxHeight: "80vh",
+              overflow: "auto",
+              minWidth: 224,
+              padding: 8
+            }}
+            onPointerDownCapture={(e) => e.stopPropagation()}
+            onClickCapture={(e) => e.stopPropagation()}
+          >
+            {children}
+          </div>
+        </>,
+        document.body
+      )}
+    </>
+  );
 }

@@ -291,7 +291,7 @@ export default function RegisterView() {
               </svg>
             </div>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">Create Account</h1>
+          <h1 className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">Create Account</h1>
           <p className="text-slate-600 dark:text-slate-400 text-lg">Join us to get started</p>
         </div>
 

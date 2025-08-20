@@ -174,7 +174,7 @@ const AlertsDrawer: React.FC<AlertsDrawerProps> = ({ variant = 'standalone' }) =
                           {!alert.acknowledgedBy && (
                             <button
                               onClick={() => handleAcknowledge(alert.id)}
-                              className="ml-2 px-2 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700"
+                              className="btn-neutral ml-2 px-2 py-1 text-xs rounded"
                             >
                               Acknowledge
                             </button>
@@ -210,7 +210,7 @@ const AlertsDrawer: React.FC<AlertsDrawerProps> = ({ variant = 'standalone' }) =
         data-testid="open-alerts"
         onClick={() => setIsOpen(!isOpen)}
         aria-label={`Open alerts drawer${unackedCount > 0 ? ` - ${unackedCount} unacknowledged alerts` : ''}`}
-        className="fixed top-4 right-4 z-50 bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
+        className="btn-primary fixed top-4 right-4 z-50 px-3 py-2 rounded-md text-sm font-medium"
       >
         Alerts {unackedCount > 0 && `(${unackedCount})`}
       </button>
