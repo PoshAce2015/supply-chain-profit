@@ -76,7 +76,7 @@ marginPercent = (profit / revenueTotal) * 100
 
 ### Commission Precedence
 1. Manual commission (absolute or percent) is source of truth
-2. Keepa commission percent is fallback only
+2. Purchase commission percent is fallback only
 3. If both present and differ by >0.5 percentage points: flag as "Commission Mismatch"
 
 ### Commission Percent Calculation
@@ -87,8 +87,8 @@ commissionPercent = (manualCommission / revenueNet) * 100
 // If manual is percent
 commissionPercent = manualCommission
 
-// If only Keepa available
-commissionPercent = keepaCommissionPercent
+// If only Purchase available
+commissionPercent = purchaseCommissionPercent
 ```
 
 ## SLA Calculations

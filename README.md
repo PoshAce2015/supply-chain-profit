@@ -255,7 +255,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 ### Sample Data
 The `samples/` directory contains CSV files that demonstrate the expected format for each file type:
-- `keepa.csv` - Product catalog data
+- `purchase.csv` - Product catalog and purchase data
 - `india_listings.csv` - Amazon India listings
 - `uspo.csv` - US Purchase Orders
 - `events.csv` - Supply chain timeline

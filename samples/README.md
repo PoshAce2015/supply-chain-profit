@@ -4,8 +4,8 @@ This directory contains sample CSV files that demonstrate the expected format fo
 
 ## File Types
 
-### 1. keepa.csv
-**Purpose**: Product catalog data from Keepa
+### 1. purchase.csv
+**Purpose**: Product catalog and purchase data
 **Columns**: ASIN, Category, Subcategory, MainCategory, Weight, WeightUnit, Dimensions, BatteryFlag
 **Notes**: 
 - BatteryFlag affects SLA calculations (extra days for battery products)
@@ -16,7 +16,7 @@ This directory contains sample CSV files that demonstrate the expected format fo
 **Purpose**: Amazon India listing data
 **Columns**: ASIN, SKU, SellingPriceINR, BuyerShippingINR, CommissionValue, CommissionMode, Channel
 **Notes**:
-- CommissionMode can be 'manual' or 'keepa'
+- CommissionMode can be 'manual' or 'purchase'
 - Channel affects fee calculations (FBA vs FBM)
 - SellingPriceINR is the primary revenue driver
 
@@ -48,7 +48,7 @@ This directory contains sample CSV files that demonstrate the expected format fo
 
 1. **Go to /imports** in the application
 2. **Upload files in this order**:
-   - keepa.csv (products)
+   - purchase.csv (products)
    - india_listings.csv (orders)
    - uspo.csv (purchase orders)
    - events.csv (timeline)

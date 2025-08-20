@@ -580,8 +580,8 @@ const ImportsView: React.FC = () => {
   const fileTypes: { type: FileType; label: string; description: string; icon: string }[] = [
     { 
       type: 'keepa', 
-      label: 'Keepa Data', 
-      description: 'Amazon product data from Keepa API',
+      label: 'Purchase', 
+      description: 'Purchase data and product information',
       icon: '📊'
     },
     { 
@@ -644,7 +644,7 @@ const ImportsView: React.FC = () => {
                 CSV Data Imports
               </h1>
               <p className="mt-2 text-lg text-gray-600">
-                Upload and configure CSV files for data processing and analysis
+                Upload and configure CSV and TXT files for data processing and analysis
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -883,7 +883,7 @@ const ImportsView: React.FC = () => {
                 <input
                   type="file"
                   multiple
-                  accept=".csv"
+                  accept=".csv,.txt"
                   onChange={(e) => {
                     const files = Array.from(e.target.files || [])
                     const fileInfos = files.map(file => ({
@@ -1244,12 +1244,12 @@ const ImportsView: React.FC = () => {
                         <p className="text-sm text-gray-600 mb-4">
                           {fileData[type] 
                             ? `Loaded ${fileData[type]!.sampleRowCount} rows with ${fileData[type]!.headers.length} columns`
-                            : 'Drag and drop your CSV file here, or click to browse'
+                            : 'Drag and drop your CSV or TXT file here, or click to browse'
                           }
                         </p>
                         <input
                           type="file"
-                          accept=".csv"
+                          accept=".csv,.txt"
                           data-testid={`file-${type}`}
                           onChange={(e) => {
                             const file = e.target.files?.[0]
@@ -1337,7 +1337,7 @@ const ImportsView: React.FC = () => {
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
                       <h4 className="font-medium text-gray-900 mb-4">Field Mapping</h4>
                       <p className="text-sm text-gray-600 mb-4">
-                        Map your CSV columns to the system's expected field names.
+                        Map your CSV or TXT file columns to the system's expected field names.
                       </p>
                       <HeaderMapper
                         headers={fileData[type]!.headers}

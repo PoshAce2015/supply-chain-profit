@@ -72,7 +72,7 @@
 
 **Key Features**:
 - **CSV Upload**: Drag-and-drop file upload with validation
-- **Pre-built Templates**: Keepa, India Listings, US Purchase Orders
+- **Pre-built Templates**: Purchase, India Listings, US Purchase Orders
 - **Field Mapping**: Visual mapping of CSV columns to system fields
 - **Batch Processing**: Handle multiple files simultaneously
 - **Import History**: Track all import activities and errors

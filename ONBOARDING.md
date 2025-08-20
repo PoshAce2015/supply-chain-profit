@@ -20,7 +20,7 @@ npm run dev
 ### 2. Import Sample Data
 1. **Navigate to `/imports`**
 2. **Upload files in order**:
-   - `samples/keepa.csv` → Save Mapping → Ingest
+   - `samples/purchase.csv` → Save Mapping → Ingest
    - `samples/india_listings.csv` → Save Mapping → Ingest
    - `samples/uspo.csv` → Save Mapping → Ingest
    - `samples/events.csv` → Save Mapping → Ingest

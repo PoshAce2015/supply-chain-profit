@@ -25,7 +25,7 @@ const HomeView: React.FC = () => {
       icon: '📥',
       details: [
         'Drag-and-drop CSV file upload with validation',
-        'Pre-built templates for Keepa, India Listings, US Purchase Orders',
+        'Pre-built templates for Purchase, India Listings, US Purchase Orders',
         'Real-time data preview and field mapping',
         'Batch import processing for multiple files',
         'Import history tracking and error reporting'

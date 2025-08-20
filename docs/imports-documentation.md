@@ -55,8 +55,8 @@ The CSV Import & Data Mapping page (`/imports`) is a comprehensive data ingestio
 
 ## Supported File Types
 
-### 1. Keepa Data (`keepa`)
-- **Purpose**: Amazon product data from Keepa API
+### 1. Purchase Data (`keepa`)
+- **Purpose**: Purchase data and product information
 - **Icon**: 📊
 - **Key Fields**: ASIN, Category, Subcategory, MainCategory, Weight, WeightUnit, Dimensions, BatteryFlag
 - **Use Case**: Product catalog management and analysis
@@ -522,7 +522,7 @@ templates.ts
 interface ImportsState {
   mappings: Record<FileType, Record<string, string>>
   datasets: {
-    keepa: Product[]
+    purchase: Product[]
     indiaListings: Order[]
     uspo: USPO[]
     events: Event[]
