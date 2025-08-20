@@ -44,9 +44,9 @@ export default function LayoutAuthed() {
         <Header />
       </header>
       
-      {/* Main content area with sidebar */}
+      {/* Main content area with sticky sidebar */}
       <div className="flex min-h-[calc(100vh-5rem)]">
-        <aside className="shrink-0 h-[calc(100vh-5rem)]">
+        <aside className="shrink-0 sticky top-0 h-[calc(100vh-5rem)] max-h-[calc(100vh-5rem)]">
           <Sidebar
             width={effective}
             collapsed={collapsed}
