@@ -250,14 +250,15 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 ### Quick Start
 - **[ONBOARDING.md](ONBOARDING.md)** - 15-minute quickstart for new operators
 - **[RUNBOOK.md](RUNBOOK.md)** - Daily operations and troubleshooting guide
-- **[samples/](samples/)** - Ready-to-import CSV files for testing
+- **[Attachment Doc/](Attachment%20Doc/)** - Comprehensive sample data files for testing
 - **Local preview**: run `npm start`, then open http://localhost:5179/imports
 
 ### Sample Data
-The `samples/` directory contains CSV files that demonstrate the expected format for each file type:
-- `purchase.csv` - Product catalog and purchase data
-- `india_listings.csv` - Amazon India listings
-- `uspo.csv` - US Purchase Orders
+The `Attachment Doc/` directory contains comprehensive sample data files:
+- `Amazon.com(purchase data).csv` - Amazon purchase data (630KB, 788 lines)
+- `Amazon Sellercentral(sales data).txt` - Amazon sales data (251KB, 509 lines)
+- `Transactions in the last 30 days.csv` - Recent transaction data (117KB, 601 lines)
+- `3730443_COMMERCIAL_INVOICE.pdf` - Commercial invoice document (43KB)
 - `events.csv` - Supply chain timeline
 - `settlement.csv` - Settlement and fee data
 

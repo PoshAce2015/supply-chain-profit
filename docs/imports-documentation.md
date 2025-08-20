@@ -55,35 +55,33 @@ The CSV Import & Data Mapping page (`/imports`) is a comprehensive data ingestio
 
 ## Supported File Types
 
-### 1. Purchase Data (`keepa`)
-- **Purpose**: Purchase data and product information
+### 1. Amazon Purchase Data (`amazon-purchase`)
+- **Purpose**: Amazon.com purchase data and product information
 - **Icon**: 📊
+- **File**: `Amazon.com(purchase data).csv`
 - **Key Fields**: ASIN, Category, Subcategory, MainCategory, Weight, WeightUnit, Dimensions, BatteryFlag
 - **Use Case**: Product catalog management and analysis
 
-### 2. India Listings (`indiaListings`)
-- **Purpose**: Product listings from India marketplace
-- **Icon**: 🇮🇳
-- **Key Fields**: ASIN, SKU, SellingPriceINR, BuyerShippingINR, CommissionValue, CommissionMode, Channel
+### 2. Amazon Sales Data (`amazon-sales`)
+- **Purpose**: Amazon Seller Central sales data
+- **Icon**: 📈
+- **File**: `Amazon Sellercentral(sales data).txt`
+- **Key Fields**: ASIN, SKU, SellingPrice, CommissionValue, CommissionMode, Channel
 - **Use Case**: India marketplace operations and pricing
 
-### 3. US Purchase Orders (`uspo`)
-- **Purpose**: Purchase order data from US operations
-- **Icon**: 📋
-- **Key Fields**: ASIN, Vendor, UnitUSD, Qty, Status, OrderDate, ShippedDate, Tracking
-- **Use Case**: Purchase order management and tracking
-
-### 4. Events (`events`)
-- **Purpose**: Event and activity data
-- **Icon**: 📅
-- **Key Fields**: ASIN, Event, Date, Carrier, Tracking
-- **Use Case**: Supply chain event tracking and timeline management
-
-### 5. Settlement (`settlement`)
-- **Purpose**: Financial settlement data
+### 3. Transaction Data (`transactions`)
+- **Purpose**: Recent transaction data from the last 30 days
 - **Icon**: 💰
-- **Key Fields**: ASIN, SKU, FeesTotalINR, NetAmountINR, Date
-- **Use Case**: Financial reconciliation and profit analysis
+- **File**: `Transactions in the last 30 days.csv`
+- **Key Fields**: TransactionID, ASIN, Amount, Date, Type, Status
+- **Use Case**: Transaction tracking and financial analysis
+
+### 4. Commercial Invoice (`invoice`)
+- **Purpose**: Commercial invoice documentation
+- **Icon**: 📄
+- **File**: `3730443_COMMERCIAL_INVOICE.pdf`
+- **Key Fields**: Invoice data and documentation
+- **Use Case**: Invoice management and documentation
 
 ## Core Features
 
@@ -521,13 +519,12 @@ templates.ts
 ```typescript
 interface ImportsState {
   mappings: Record<FileType, Record<string, string>>
-  datasets: {
-    purchase: Product[]
-    indiaListings: Order[]
-    uspo: USPO[]
-    events: Event[]
-    settlement: Settlement[]
-  }
+      datasets: {
+      amazonPurchase: Product[]
+      amazonSales: Order[]
+      transactions: Transaction[]
+      invoices: Invoice[]
+    }
 }
 ```
 

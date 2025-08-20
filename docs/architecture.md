@@ -127,7 +127,7 @@ Supply Chain & Profit is a local-first SPA for processing CSV data and calculati
 
 ### Test Data
 - Deterministic fixtures for calculations
-- Known good/bad samples for validation
+- Known good/bad samples for validation (using Attachment Doc folder)
 - Performance test datasets
 - Edge case scenarios
 

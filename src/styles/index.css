@@ -754,6 +754,102 @@ main {
   max-height: calc(100vh - 5rem) !important;
 }
 
+/* Breadcrumb styling */
+nav[aria-label="Breadcrumb"] {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
+  background: white !important;
+}
+
+nav[aria-label="Breadcrumb"] ol {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+}
+
+/* Enhanced Navigation UX */
+.sidebar-modern {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent !important;
+}
+
+.sidebar-modern::-webkit-scrollbar {
+  width: 4px !important;
+}
+
+.sidebar-modern::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.sidebar-modern::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5) !important;
+  border-radius: 2px !important;
+}
+
+.sidebar-modern::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.8) !important;
+}
+
+/* Navigation item animations */
+.nav-list li {
+  animation: slideInFromLeft 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.nav-list li:nth-child(1) { animation-delay: 0.1s; }
+.nav-list li:nth-child(2) { animation-delay: 0.15s; }
+.nav-list li:nth-child(3) { animation-delay: 0.2s; }
+.nav-list li:nth-child(4) { animation-delay: 0.25s; }
+.nav-list li:nth-child(5) { animation-delay: 0.3s; }
+.nav-list li:nth-child(6) { animation-delay: 0.35s; }
+.nav-list li:nth-child(7) { animation-delay: 0.4s; }
+.nav-list li:nth-child(8) { animation-delay: 0.45s; }
+.nav-list li:nth-child(9) { animation-delay: 0.5s; }
+.nav-list li:nth-child(10) { animation-delay: 0.55s; }
+.nav-list li:nth-child(11) { animation-delay: 0.6s; }
+
+/* Header enhancements */
+.app-header {
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.header-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15) !important;
+}
+
+/* Focus indicators for better accessibility */
+.nav-list a:focus,
+.nav-list button:focus {
+  outline: 2px solid #667eea !important;
+  outline-offset: 2px !important;
+  border-radius: 8px !important;
+}
+
+/* Loading states */
+.nav-list a.loading {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.nav-list a.loading::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent) !important;
+  animation: shimmer 1.5s infinite !important;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
 /* Ensure the main content container scrolls independently */
 .flex-1 {
   overflow-y: auto !important;

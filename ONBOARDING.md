@@ -20,11 +20,10 @@ npm run dev
 ### 2. Import Sample Data
 1. **Navigate to `/imports`**
 2. **Upload files in order**:
-   - `samples/purchase.csv` → Save Mapping → Ingest
-   - `samples/india_listings.csv` → Save Mapping → Ingest
-   - `samples/uspo.csv` → Save Mapping → Ingest
-   - `samples/events.csv` → Save Mapping → Ingest
-   - `samples/settlement.csv` → Save Mapping → Ingest
+   - `Attachment Doc/Amazon.com(purchase data).csv` → Save Mapping → Ingest
+   - `Attachment Doc/Amazon Sellercentral(sales data).txt` → Save Mapping → Ingest
+   - `Attachment Doc/Transactions in the last 30 days.csv` → Save Mapping → Ingest
+
 
 **Expected**: All files show "Ingested" status
 

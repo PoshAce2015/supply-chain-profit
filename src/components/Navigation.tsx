@@ -10,17 +10,83 @@ type Props = {
 };
 
 const NAV = [
-  { to: "/dashboard", label: "Dashboard", icon: "📊", testId: "nav-dashboard" },
-  { to: "/imports", label: "Imports", icon: "📥", testId: "nav-imports" },
-  { to: "/calculator", label: "Calculator", icon: "🧮", testId: "nav-calculator" },
-  { to: "/orders", label: "Orders", icon: "📦", testId: "nav-orders" },
-  { to: "/sla", label: "SLA", icon: "⏱️", testId: "nav-sla" },
-  { to: "/analytics", label: "Analytics", icon: "📈", testId: "nav-analytics" },
-  { to: "/cashflow", label: "Cashflow", icon: "💰", testId: "nav-cashflow" },
-  { to: "/reconcile", label: "Reconcile", icon: "🔍", testId: "nav-reconcile" },
-  { to: "/validator", label: "Validator", icon: "✅", testId: "nav-validator" },
-  { to: "/users", label: "Users", icon: "👥", testId: "nav-users" },
-  { to: "/settings", label: "Settings", icon: "⚙️", testId: "nav-settings" },
+  { 
+    to: "/dashboard", 
+    label: "Dashboard", 
+    icon: "📊", 
+    testId: "nav-dashboard",
+    description: "Overview and key metrics"
+  },
+  { 
+    to: "/imports", 
+    label: "Data Imports", 
+    icon: "📥", 
+    testId: "nav-imports",
+    description: "Upload and manage data files"
+  },
+  { 
+    to: "/calculator", 
+    label: "Profit Calculator", 
+    icon: "🧮", 
+    testId: "nav-calculator",
+    description: "Calculate margins and profits"
+  },
+  { 
+    to: "/orders", 
+    label: "Order Management", 
+    icon: "📦", 
+    testId: "nav-orders",
+    description: "Track orders and compliance"
+  },
+  { 
+    to: "/sla", 
+    label: "SLA Monitoring", 
+    icon: "⏱️", 
+    testId: "nav-sla",
+    description: "Service level agreements"
+  },
+  { 
+    to: "/analytics", 
+    label: "Analytics", 
+    icon: "📈", 
+    testId: "nav-analytics",
+    description: "Performance insights and reports"
+  },
+  { 
+    to: "/cashflow", 
+    label: "Cash Flow", 
+    icon: "💰", 
+    testId: "nav-cashflow",
+    description: "Financial projections and analysis"
+  },
+  { 
+    to: "/reconcile", 
+    label: "Settlement Reconciliation", 
+    icon: "🔍", 
+    testId: "nav-reconcile",
+    description: "Match and verify transactions"
+  },
+  { 
+    to: "/validator", 
+    label: "Data Validation", 
+    icon: "✅", 
+    testId: "nav-validator",
+    description: "Quality checks and validation"
+  },
+  { 
+    to: "/users", 
+    label: "User Management", 
+    icon: "👥", 
+    testId: "nav-users",
+    description: "Manage users and permissions"
+  },
+  { 
+    to: "/settings", 
+    label: "System Settings", 
+    icon: "⚙️", 
+    testId: "nav-settings",
+    description: "Application configuration"
+  },
 ];
 
 export default function Sidebar({ width, collapsed, onToggle, onResize }: Props) {
@@ -111,7 +177,7 @@ export default function Sidebar({ width, collapsed, onToggle, onResize }: Props)
                     hoveredItem === item.to ? 'scale-105' : ''
                   }`
                 }
-                title={collapsed ? item.label : undefined}
+                title={collapsed ? `${item.label} - ${item.description}` : item.description}
                 onMouseEnter={() => setHoveredItem(item.to)}
                 onMouseLeave={() => setHoveredItem(null)}
                 style={{
@@ -138,6 +204,14 @@ export default function Sidebar({ width, collapsed, onToggle, onResize }: Props)
                 <div className={`absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-600/10 rounded-lg opacity-0 transition-opacity duration-200 ${
                   hoveredItem === item.to ? 'opacity-100' : ''
                 }`} />
+                
+                {/* Tooltip for collapsed state */}
+                {collapsed && (
+                  <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                    {item.label}
+                    <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
+                  </div>
+                )}
               </NavLink>
             </li>
           ))}

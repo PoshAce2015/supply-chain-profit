@@ -530,21 +530,6 @@ const ChecklistView: React.FC = () => {
   
   return (
     <div data-testid="orders-view" className="p-6">
-      {/* Priority 1: Breadcrumb Navigation */}
-      <nav className="mb-6" aria-label="Breadcrumb">
-        <ol className="flex items-center space-x-2 text-sm text-gray-600">
-          <li>
-            <a href="/dashboard" className="hover:text-gray-900 hover:underline">Dashboard</a>
-          </li>
-          <li>
-            <span className="text-gray-400">/</span>
-          </li>
-          <li className="text-gray-900 font-medium" aria-current="page">
-            Orders & Checklist
-          </li>
-        </ol>
-      </nav>
-      
       {/* Priority 1: Page Header with Clear Identity */}
       <div className="mb-6">
         <h1>Orders & Checklist</h1>

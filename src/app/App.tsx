@@ -16,6 +16,8 @@ import ErrorBoundary from '../components/ErrorBoundary'
 import LoadingSpinner from '../components/LoadingSpinner'
 
 import ImportsView from '../features/imports/ImportsView'
+import ImportCategoryPage from '../features/imports/ImportCategoryPage'
+import { getCategorySchema } from '../features/imports/categorySchemas'
 import CalculatorView from '../features/calculator/CalculatorView'
 import ChecklistView from '../features/orders/ChecklistView'
 import AnalyticsView from '../features/analytics/AnalyticsView'
@@ -30,7 +32,14 @@ import { runSelfTests, SelfTestResult } from './selftest'
 import LayoutPublic from "./LayoutPublic"
 import HomeView from '../features/home/HomeView'
 
-
+// Category route wrapper component
+const CategoryRoute: React.FC<{ categoryId: string }> = ({ categoryId }) => {
+  const category = getCategorySchema(categoryId)
+  if (!category) {
+    return <Navigate to="/imports" replace />
+  }
+  return <ImportCategoryPage category={category} />
+}
 
 export default function App() {
   // Initialize SLA engine
@@ -99,6 +108,13 @@ export default function App() {
               <Route element={<LayoutAuthed />}>
                 <Route path="/dashboard" element={<DashboardView />} />
                 <Route path="/imports" element={<ImportsView />} />
+                <Route path="/imports/sales" element={<CategoryRoute categoryId="sales" />} />
+                <Route path="/imports/purchase" element={<CategoryRoute categoryId="purchase" />} />
+                <Route path="/imports/international-shipping" element={<CategoryRoute categoryId="international-shipping" />} />
+                <Route path="/imports/national-shipping" element={<CategoryRoute categoryId="national-shipping" />} />
+                <Route path="/imports/payment" element={<CategoryRoute categoryId="payment" />} />
+                <Route path="/imports/refund" element={<CategoryRoute categoryId="refund" />} />
+                <Route path="/imports/fba" element={<CategoryRoute categoryId="fba" />} />
                 <Route path="/calculator" element={<CalculatorView />} />
                 <Route path="/orders" element={<ChecklistView />} />
                 <Route path="/sla" element={<SLAView />} />

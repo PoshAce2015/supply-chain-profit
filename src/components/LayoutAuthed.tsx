@@ -1,5 +1,6 @@
 import Header from "./Header";
 import Sidebar from "./Navigation";
+import Breadcrumb from "./Breadcrumb";
 import { Outlet } from "react-router-dom";
 import { useEffect, useMemo } from "react";
 import { useLocalStorage } from "../lib/useLocalStorage";
@@ -55,6 +56,8 @@ export default function LayoutAuthed() {
           />
         </aside>
         <main className="flex-1 min-w-0 bg-gray-50">
+          {/* Breadcrumb Navigation */}
+          <Breadcrumb />
           <div className="p-4 sm:p-6 lg:p-8">
             <Outlet />
           </div>
