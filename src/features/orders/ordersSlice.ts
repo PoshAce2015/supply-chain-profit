@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { OrderSummary, TimelineEvent, IngestResult } from '../../lib/imports/ingest'
 
 interface OrderAck {
   by: string
@@ -12,10 +13,15 @@ interface OrderAcks {
 
 interface OrdersState {
   acks: Record<string, OrderAcks> // key: ASIN
+  timeline: Record<string, TimelineEvent[]> // orderId → events
+  summaries: OrderSummary[] // order summaries
+  ingestResult?: IngestResult // latest ingest result
 }
 
 const initialState: OrdersState = {
   acks: {},
+  timeline: {},
+  summaries: [],
 }
 
 const ordersSlice = createSlice({
@@ -46,10 +52,22 @@ const ordersSlice = createSlice({
       const asin = action.payload
       delete state.acks[asin]
     },
+    setTimelineData: (state, action: PayloadAction<{ timeline: Record<string, TimelineEvent[]>; summaries: OrderSummary[] }>) => {
+      state.timeline = action.payload.timeline
+      state.summaries = action.payload.summaries
+    },
+    setIngestResult: (state, action: PayloadAction<IngestResult>) => {
+      state.ingestResult = action.payload
+    },
+    clearTimelineData: (state) => {
+      state.timeline = {}
+      state.summaries = []
+      state.ingestResult = undefined
+    },
   },
 })
 
-export const { ackStep1, ackStep2, resetAck } = ordersSlice.actions
+export const { ackStep1, ackStep2, resetAck, setTimelineData, setIngestResult, clearTimelineData } = ordersSlice.actions
 export const ordersReducer = ordersSlice.reducer
 
 // Helper selector to check if two-person rule can be enforced

@@ -532,8 +532,20 @@ const ChecklistView: React.FC = () => {
     <div data-testid="orders-view" className="p-6">
       {/* Priority 1: Page Header with Clear Identity */}
       <div className="mb-6">
-        <h1>Orders & Checklist</h1>
-        <p className="text-gray-600">Manage order processing, track SLA compliance, and monitor aging orders</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1>Orders & Checklist</h1>
+            <p className="text-gray-600">Manage order processing, track SLA compliance, and monitor aging orders</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => window.location.href = '/orders/timeline'}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition-colors"
+            >
+              📊 View Timeline
+            </button>
+          </div>
+        </div>
       </div>
       
       {/* Priority 1: Search and Filter Controls */}

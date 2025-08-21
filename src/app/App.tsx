@@ -17,9 +17,11 @@ import LoadingSpinner from '../components/LoadingSpinner'
 
 import ImportsView from '../features/imports/ImportsView'
 import ImportCategoryPage from '../features/imports/ImportCategoryPage'
+import BulkImportView from '../features/imports/BulkImportView'
 import { getCategorySchema } from '../features/imports/categorySchemas'
 import CalculatorView from '../features/calculator/CalculatorView'
 import ChecklistView from '../features/orders/ChecklistView'
+import OrderTimelineView from '../features/orders/OrderTimelineView'
 import AnalyticsView from '../features/analytics/AnalyticsView'
 import CashflowView from '../features/cashflow/CashflowView'
 import ReconcileView from '../features/reconcile/ReconcileView'
@@ -108,6 +110,7 @@ export default function App() {
               <Route element={<LayoutAuthed />}>
                 <Route path="/dashboard" element={<DashboardView />} />
                 <Route path="/imports" element={<ImportsView />} />
+                <Route path="/imports/bulk" element={<BulkImportView />} />
                 <Route path="/imports/sales" element={<CategoryRoute categoryId="sales" />} />
                 <Route path="/imports/purchase" element={<CategoryRoute categoryId="purchase" />} />
                 <Route path="/imports/international-shipping" element={<CategoryRoute categoryId="international-shipping" />} />
@@ -117,6 +120,7 @@ export default function App() {
                 <Route path="/imports/fba" element={<CategoryRoute categoryId="fba" />} />
                 <Route path="/calculator" element={<CalculatorView />} />
                 <Route path="/orders" element={<ChecklistView />} />
+                <Route path="/orders/timeline" element={<OrderTimelineView />} />
                 <Route path="/sla" element={<SLAView />} />
                 <Route path="/analytics" element={<AnalyticsView />} />
                 <Route path="/cashflow" element={<CashflowView />} />

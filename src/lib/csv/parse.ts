@@ -3,7 +3,12 @@ export interface ParsedCsv {
   rows: string[][]
 }
 
-export function parseCsv(text: string): ParsedCsv {
+export interface ParseOptions {
+  delimiter?: string
+}
+
+export function parseCsv(text: string, options: ParseOptions = {}): ParsedCsv {
+  const delimiter = options.delimiter || ','
   const lines = text.split('\n').filter(line => line.trim() !== '')
   
   if (lines.length === 0) {
@@ -15,9 +20,9 @@ export function parseCsv(text: string): ParsedCsv {
     return { headers: [], rows: [] }
   }
 
-  const headers = firstLine.split(',').map(h => h.trim())
+  const headers = firstLine.split(delimiter).map(h => h.trim())
   const dataRows = lines.slice(1).map(line => 
-    line.split(',').map(cell => cell.trim())
+    line.split(delimiter).map(cell => cell.trim())
   )
 
   return {

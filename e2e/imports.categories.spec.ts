@@ -4,9 +4,9 @@ test.describe('Imports Categories', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to login and authenticate
     await page.goto('/login')
-    await page.fill('[data-testid="email-input"]', 'ops@example.com')
-    await page.fill('[data-testid="password-input"]', 'password123')
-    await page.click('[data-testid="login-button"]')
+    await page.fill('[data-testid="login-email"]', 'ops@example.com')
+    await page.fill('[data-testid="login-password"]', 'password123')
+    await page.click('[data-testid="btn-login-submit"]')
     
     // Wait for navigation to dashboard
     await page.waitForURL('/dashboard')
@@ -19,8 +19,8 @@ test.describe('Imports Categories', () => {
     const expectedCategories = [
       'imp-cat-sales',
       'imp-cat-purchase', 
-      'imp-cat-intl-ship',
-      'imp-cat-national-ship',
+      'imp-cat-international-shipping',
+      'imp-cat-national-shipping',
       'imp-cat-payment',
       'imp-cat-refund',
       'imp-cat-fba'
@@ -40,8 +40,8 @@ test.describe('Imports Categories', () => {
     const categoryTests = [
       { testId: 'imp-cat-sales', route: '/imports/sales', title: 'Sales' },
       { testId: 'imp-cat-purchase', route: '/imports/purchase', title: 'Purchase' },
-      { testId: 'imp-cat-intl-ship', route: '/imports/international-shipping', title: 'International Shipping' },
-      { testId: 'imp-cat-national-ship', route: '/imports/national-shipping', title: 'National Shipping' },
+      { testId: 'imp-cat-international-shipping', route: '/imports/international-shipping', title: 'International Shipping' },
+      { testId: 'imp-cat-national-shipping', route: '/imports/national-shipping', title: 'National Shipping' },
       { testId: 'imp-cat-payment', route: '/imports/payment', title: 'Payment' },
       { testId: 'imp-cat-refund', route: '/imports/refund', title: 'Refund' },
       { testId: 'imp-cat-fba', route: '/imports/fba', title: 'FBA' }

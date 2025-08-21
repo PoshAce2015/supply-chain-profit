@@ -37,6 +37,12 @@ const ImportsView: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-3">
+            <button 
+              onClick={() => navigate('/imports/bulk')}
+              className="btn-primary px-4 py-2 rounded-lg text-sm"
+            >
+              📦 Bulk Import
+            </button>
             <button className="btn-neutral px-4 py-2 rounded-lg text-sm">
               📊 Import History
             </button>
@@ -57,22 +63,22 @@ const ImportsView: React.FC = () => {
             >
               {/* Card Header */}
               <div className="p-6 border-b border-gray-100">
-                <div className="flex items-center gap-3 mb-3">
+                <div className="flex items-center gap-3 mb-4">
                   <span className="text-3xl">{category.icon}</span>
                   <h3 className="text-xl font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
                     {category.title}
                   </h3>
                 </div>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-gray-600 text-sm leading-relaxed mb-0">
                   {category.help}
                 </p>
               </div>
 
               {/* Card Content */}
               <div className="p-6">
-                <div className="mb-4">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">Expected Columns</h4>
-                  <div className="flex flex-wrap gap-1">
+                <div className="mb-6">
+                  <h4 className="text-sm font-medium text-gray-900 mb-3">Expected Columns</h4>
+                  <div className="flex flex-wrap gap-2">
                     {category.schema.slice(0, 5).map((col, index) => (
                       <span
                         key={index}
@@ -92,8 +98,8 @@ const ImportsView: React.FC = () => {
                     )}
                   </div>
                 </div>
-
-                <div className="flex items-center justify-between">
+                
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                   <div className="text-sm text-gray-500">
                     Accepts: {category.accept.join(', ')}
                   </div>

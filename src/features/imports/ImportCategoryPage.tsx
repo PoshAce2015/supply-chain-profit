@@ -1,7 +1,9 @@
 import React, { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { CategorySchema } from './categorySchemas'
 import { handleImportFile, downloadTemplate } from './upload'
+import { setTimelineData, setIngestResult } from '../orders/ordersSlice'
 
 interface ImportCategoryPageProps {
   category: CategorySchema
@@ -9,6 +11,7 @@ interface ImportCategoryPageProps {
 
 const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadResult, setUploadResult] = useState<{
@@ -50,7 +53,7 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
     setUploadResult(null)
 
     try {
-      const result = await handleImportFile(category.id, file)
+      const result = await handleImportFile(category.id, file, dispatch)
       
       if (result.success) {
         setUploadResult({
@@ -59,14 +62,14 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
           warnings: result.warnings
         })
         
-        // Show toast notification
+        // Show toast notification with timeline link
         if (typeof window !== 'undefined' && (window as any).showToast) {
           (window as any).showToast({
             type: 'success',
             message: `Imported ${result.rowsCount} rows into ${category.title}`,
             actions: [
               { label: 'Back to Imports', action: () => navigate('/imports') },
-              { label: 'View Orders', action: () => navigate('/orders') }
+              { label: 'View Timeline', action: () => navigate('/orders/timeline') }
             ]
           })
         }
@@ -172,6 +175,23 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
                 }`}>
                   {uploadResult.message}
                 </p>
+
+                {uploadResult.success && (
+                  <div className="mt-3 flex items-center gap-3">
+                    <button
+                      onClick={() => navigate('/imports')}
+                      className="px-3 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+                    >
+                      ← Back to Imports
+                    </button>
+                    <button
+                      onClick={() => navigate('/orders/timeline')}
+                      className="px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                    >
+                      📊 View Timeline
+                    </button>
+                  </div>
+                )}
                 
                 {uploadResult.errors && uploadResult.errors.length > 0 && (
                   <div className="mt-2">
