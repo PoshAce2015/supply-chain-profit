@@ -57,6 +57,10 @@ export type OrderSummary = {
   refundedToDate: number;
   delta: number;               // paid - refunded
   flags: string[];             // any anomalies
+  source?: {
+    channel: 'amazon_in' | 'flipkart' | 'poshace' | 'website' | 'other';
+    orderClass?: 'b2b' | 'b2c';
+  };
 };
 
 export type IngestResult = {
@@ -191,7 +195,7 @@ export function detectKind(name: string, sample?: string): SourceKind {
 
 // ---------------------------- Parsers → events ----------------------------
 
-// A. Amazon Orders (India Seller Central) – typically TSV
+// A. Amazon Orders TSV – Order creation
 function eventsFromAmazonOrders(rows: AnyRow[]): TimelineEvent[] {
   const out: TimelineEvent[] = [];
   for (const r of rows) {
@@ -201,12 +205,22 @@ function eventsFromAmazonOrders(rows: AnyRow[]): TimelineEvent[] {
     // Ordered
     const purchase = String(r["purchase-date"] ?? r["purchase date"] ?? "") || undefined;
     if (purchase) {
+      // Extract source information from the row
+      let source: any = undefined;
+      if (r.source) {
+        source = r.source;
+      }
+      
       out.push({
         orderId,
         at: dayjs(purchase).isValid() ? dayjs(purchase).toISOString() : new Date().toISOString(),
         type: "ORDERED",
         source: "amazon_orders_tsv",
-        details: { sku: r["sku"], qty: r["quantity-purchased"] ?? r["quantity"] },
+        details: { 
+          sku: r["sku"], 
+          qty: r["quantity-purchased"] ?? r["quantity"],
+          source: source
+        },
       });
     }
 
@@ -444,7 +458,56 @@ export async function ingestFiles(files: InFile[], cfg: Partial<BranchCfg> = {})
     if (paidToDate !== 0 && Math.abs(paidToDate) < 0.01) flags.push("tiny_payment");
     if (refundedToDate !== 0 && Math.abs(refundedToDate) < 0.01) flags.push("tiny_refund");
 
-    return {
+    // Extract source information from order data
+    let source: OrderSummary['source'] | undefined;
+    const orderEvent = es.find(e => e.type === 'ORDERED');
+    if (orderEvent && orderEvent.details?.source) {
+      const rawSource = orderEvent.details.source;
+      if (typeof rawSource === 'object' && rawSource !== null) {
+        const src = rawSource as any;
+        if (src.channel && ['amazon_in', 'flipkart', 'poshace', 'website', 'other'].includes(src.channel)) {
+          const orderClass = src.orderClass && ['b2b', 'b2c'].includes(src.orderClass) ? src.orderClass : undefined;
+          source = {
+            channel: src.channel,
+            ...(orderClass && { orderClass })
+          };
+        }
+      } else if (typeof rawSource === 'string') {
+        // Handle legacy combined strings like "flipkart_b2b"
+        const low = rawSource.toLowerCase();
+        if (low.startsWith('flipkart')) {
+          const orderClass = low.includes('b2b') ? 'b2b' : low.includes('b2c') ? 'b2c' : undefined;
+          source = {
+            channel: 'flipkart',
+            ...(orderClass && { orderClass })
+          };
+        } else if (low.startsWith('amazon')) {
+          const orderClass = low.includes('b2b') ? 'b2b' : low.includes('b2c') ? 'b2c' : undefined;
+          source = {
+            channel: 'amazon_in',
+            ...(orderClass && { orderClass })
+          };
+        } else if (low.startsWith('poshace')) {
+          const orderClass = low.includes('b2b') ? 'b2b' : low.includes('b2c') ? 'b2c' : undefined;
+          source = {
+            channel: 'poshace',
+            ...(orderClass && { orderClass })
+          };
+        } else if (low.startsWith('website')) {
+          const orderClass = low.includes('b2b') ? 'b2b' : low.includes('b2c') ? 'b2c' : undefined;
+          source = {
+            channel: 'website',
+            ...(orderClass && { orderClass })
+          };
+        } else {
+          source = {
+            channel: 'other'
+          };
+        }
+      }
+    }
+
+    const summary: OrderSummary = {
       orderId,
       firstSeen,
       lastSeen,
@@ -454,6 +517,13 @@ export async function ingestFiles(files: InFile[], cfg: Partial<BranchCfg> = {})
       delta: Number((paidToDate - refundedToDate).toFixed(2)),
       flags,
     };
+
+    // Only add source if it exists
+    if (source) {
+      summary.source = source;
+    }
+
+    return summary;
   });
 
   return {

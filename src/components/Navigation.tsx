@@ -39,6 +39,13 @@ const NAV = [
     description: "Track orders and compliance"
   },
   { 
+    to: "/timeline", 
+    label: "Order Timeline", 
+    icon: "📅", 
+    testId: "nav-timeline",
+    description: "Unified view of sales and purchase events"
+  },
+  { 
     to: "/sla", 
     label: "SLA Monitoring", 
     icon: "⏱️", 

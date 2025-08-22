@@ -16,6 +16,49 @@ export interface CategorySchema {
 }
 
 export const CATEGORY_SCHEMAS: Record<string, CategorySchema> = {
+  // User's specific files
+  'user-purchase': {
+    id: 'user-purchase',
+    title: 'Purchase Data (Excel)',
+    help: 'Import your Purchase.xlsx file from Amazon Business',
+    icon: '📊',
+    schema: [
+      { key: 'asin', label: 'ASIN', required: true, example: 'B08N5WRWNW' },
+      { key: 'sku', label: 'SKU', required: false, example: 'PROD-001' },
+      { key: 'title', label: 'Product Title', required: false, example: 'Wireless Headphones' },
+      { key: 'brand', label: 'Brand', required: false, example: 'Sony' },
+      { key: 'price', label: 'Price', required: true, example: '15.50' },
+      { key: 'qty', label: 'Quantity', required: true, example: '100' },
+      { key: 'order_date', label: 'Order Date', required: false, example: '2024-01-15' },
+      { key: 'supplier', label: 'Supplier', required: false, example: 'Amazon Business' },
+      { key: 'unit_cost', label: 'Unit Cost', required: false, example: '12.00' },
+      { key: 'total_cost', label: 'Total Cost', required: false, example: '1200.00' }
+    ],
+    accept: ['.xlsx', '.xls', '.csv'],
+    templateHref: '/templates/user-purchase-template.xlsx'
+  },
+  'user-sales': {
+    id: 'user-sales',
+    title: 'Sales Data (Excel)',
+    help: 'Import your Sales.xls file from Amazon Seller Central',
+    icon: '📈',
+    schema: [
+      { key: 'order_id', label: 'Order ID', required: true, example: '408-4870009-9733125' },
+      { key: 'order_item_id', label: 'Order Item ID', required: false, example: '52336476957402' },
+      { key: 'purchase_date', label: 'Purchase Date', required: true, example: '2025-07-30T08:34:47+00:00' },
+      { key: 'sku', label: 'SKU', required: true, example: 'ARB_B0B79CYVTM' },
+      { key: 'product_name', label: 'Product Name', required: false, example: 'VSN Noise Gate Pedal' },
+      { key: 'quantity_purchased', label: 'Quantity Purchased', required: true, example: '1' },
+      { key: 'sale_price', label: 'Sale Price', required: false, example: '29.99' },
+      { key: 'buyer_shipping', label: 'Buyer Shipping', required: false, example: '5.00' },
+      { key: 'channel', label: 'Channel', required: false, example: 'FBA' },
+      { key: 'buyer_name', label: 'Buyer Name', required: false, example: 'John Doe' },
+      { key: 'ship_city', label: 'Ship City', required: false, example: 'CHANDIGARH' },
+      { key: 'ship_state', label: 'Ship State', required: false, example: 'CHANDIGARH' }
+    ],
+    accept: ['.xls', '.xlsx', '.csv', '.txt'],
+    templateHref: '/templates/user-sales-template.xls'
+  },
   sales: {
     id: 'sales',
     title: 'Sales',

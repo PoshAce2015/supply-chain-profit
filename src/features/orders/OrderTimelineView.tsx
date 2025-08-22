@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { OrderSummary, TimelineEvent, OrderBranch } from '../../lib/imports/ingest'
+import { CHANNEL_LABELS, CLASS_LABELS } from '../../lib/types'
 import dayjs from 'dayjs'
 
 interface OrderTimelineViewProps {}
@@ -253,6 +254,20 @@ const OrderTimelineView: React.FC<OrderTimelineViewProps> = () => {
                               </div>
                               <div className="text-sm text-gray-500">
                                 {dayjs(summary.lastSeen).format('MMM D, YYYY')}
+                              </div>
+                              {/* Source information */}
+                              <div className="flex items-center gap-1 mt-1">
+                                {summary.source?.channel && (
+                                  <span data-testid="order-source-channel" className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-slate-100 text-slate-700">
+                                    {CHANNEL_LABELS[summary.source.channel]}
+                                  </span>
+                                )}
+                                {summary.source?.orderClass && (
+                                  <span data-testid="order-source-class" className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-slate-100 text-slate-700">
+                                    {CLASS_LABELS[summary.source.orderClass]}
+                                  </span>
+                                )}
+                                {!summary.source && <span data-testid="order-source-empty" className="text-slate-400 text-xs">—</span>}
                               </div>
                             </div>
                             <div className={`px-2 py-1 text-xs font-medium rounded-full ${branchInfo.color}`}>

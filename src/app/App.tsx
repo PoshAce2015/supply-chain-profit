@@ -22,6 +22,7 @@ import { getCategorySchema } from '../features/imports/categorySchemas'
 import CalculatorView from '../features/calculator/CalculatorView'
 import ChecklistView from '../features/orders/ChecklistView'
 import OrderTimelineView from '../features/orders/OrderTimelineView'
+import TimelineView from '../features/timeline/TimelineView'
 import AnalyticsView from '../features/analytics/AnalyticsView'
 import CashflowView from '../features/cashflow/CashflowView'
 import ReconcileView from '../features/reconcile/ReconcileView'
@@ -121,6 +122,7 @@ export default function App() {
                 <Route path="/calculator" element={<CalculatorView />} />
                 <Route path="/orders" element={<ChecklistView />} />
                 <Route path="/orders/timeline" element={<OrderTimelineView />} />
+                <Route path="/timeline" element={<TimelineView />} />
                 <Route path="/sla" element={<SLAView />} />
                 <Route path="/analytics" element={<AnalyticsView />} />
                 <Route path="/cashflow" element={<CashflowView />} />

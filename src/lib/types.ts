@@ -11,6 +11,9 @@ export interface Product {
   weightUnit?: string
 }
 
+export type OrderChannel = 'amazon_in' | 'flipkart' | 'poshace' | 'website' | 'other';
+export type OrderClass = 'b2b' | 'b2c' | undefined;
+
 export interface Order {
   asin: string
   sku: string
@@ -22,7 +25,25 @@ export interface Order {
   status?: string
   commission_value?: number
   commission_mode?: 'manual' | 'keepa'
+  source?: {
+    channel: OrderChannel;
+    orderClass?: OrderClass;
+  } | undefined;
 }
+
+// Helper constants for UI labels
+export const CHANNEL_LABELS: Record<OrderChannel, string> = {
+  amazon_in: 'Amazon Seller Central (IN)',
+  flipkart: 'Flipkart',
+  poshace: 'Poshace',
+  website: 'Website',
+  other: 'Other'
+};
+
+export const CLASS_LABELS: Record<Exclude<OrderClass, undefined>, string> = {
+  b2b: 'B2B',
+  b2c: 'B2C'
+};
 
 export interface USPO {
   asin: string
@@ -69,4 +90,4 @@ export interface User {
 }
 
 // File types for CSV mapping
-export type FileType = 'keepa' | 'indiaListings' | 'uspo' | 'events' | 'settlement'
+export type FileType = 'keepa' | 'indiaListings' | 'uspo' | 'events' | 'settlement' | 'userPurchase' | 'userSales'

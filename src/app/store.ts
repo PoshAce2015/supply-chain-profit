@@ -6,6 +6,7 @@ import { slaReducer } from '../features/sla/slaSlice'
 import { ordersReducer } from '../features/orders/ordersSlice'
 import { ratesReducer } from '../features/settings/ratesSlice'
 import usersReducer from '../features/users/usersSlice'
+import timelineReducer from '../features/timeline/timelineSlice'
 
 // Inline reducers for persisted keys
 const settingsReducer = (state = {}, action: any) => {
@@ -20,7 +21,7 @@ const persistConfig = {
   key: 'scp:v1',
   storage,
   whitelist: ['settings', 'users'], // Only persist settings and users
-  blacklist: ['imports', 'calculator', 'orders', 'sla', 'analytics', 'cashflow', 'reconcile', 'validator'], // Don't persist large datasets
+  blacklist: ['imports', 'calculator', 'orders', 'sla', 'analytics', 'cashflow', 'reconcile', 'validator', 'timeline'], // Don't persist large datasets
 }
 
 // Root reducer with combineReducers
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
   sla: slaReducer, // SLA state (no persistence)
   orders: ordersReducer, // Orders state (no persistence)
   rates: ratesReducer, // Rates state (persisted)
+  timeline: timelineReducer, // Timeline state (no persistence)
   // TODO: Add other slices when implemented
   // calculator: calculatorReducer,
   // analytics: analyticsReducer,

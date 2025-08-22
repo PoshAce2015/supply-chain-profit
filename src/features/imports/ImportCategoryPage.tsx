@@ -4,6 +4,8 @@ import { useDispatch } from 'react-redux'
 import { CategorySchema } from './categorySchemas'
 import { handleImportFile, downloadTemplate } from './upload'
 import { setTimelineData, setIngestResult } from '../orders/ordersSlice'
+import { PURCHASE_VENDOR_LABELS, type PurchaseVendorId, normalizeDomain } from '../../types/purchase'
+import { CHANNEL_LABELS } from '../../lib/types'
 
 interface ImportCategoryPageProps {
   category: CategorySchema
@@ -20,6 +22,37 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
     errors?: string[]
     warnings?: string[]
   } | null>(null)
+
+  // Sales source state
+  const [selectedChannel, setSelectedChannel] = useState('')
+  const [selectedOrderClass, setSelectedOrderClass] = useState('')
+
+  // Purchase source state
+  const [purchaseVendor, setPurchaseVendor] = useState<PurchaseVendorId | ''>('')
+  const [customDomain, setCustomDomain] = useState('')
+  const [domainError, setDomainError] = useState<string | null>(null)
+
+  const CHANNELS = [
+    { id: 'amazon_in', label: 'Amazon Seller Central (IN)' },
+    { id: 'flipkart',  label: 'Flipkart' },
+    { id: 'poshace',   label: CHANNEL_LABELS.poshace },
+    { id: 'website',   label: 'Website' },
+    { id: 'other',     label: 'Other' }
+  ] as const;
+
+  const CLASSES = [
+    { id: '',    label: '— Not specified —' },
+    { id: 'b2b', label: 'B2B' },
+    { id: 'b2c', label: 'B2C' }
+  ] as const;
+
+  const PURCHASE_VENDORS: { id: PurchaseVendorId; label: string }[] = [
+    { id: 'amazon_com', label: PURCHASE_VENDOR_LABELS.amazon_com },
+    { id: 'walmart_com', label: PURCHASE_VENDOR_LABELS.walmart_com },
+    { id: 'ebay_com',    label: PURCHASE_VENDOR_LABELS.ebay_com },
+    { id: 'newegg_com',  label: PURCHASE_VENDOR_LABELS.newegg_com },
+    { id: 'custom',      label: PURCHASE_VENDOR_LABELS.custom },
+  ];
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -53,7 +86,25 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
     setUploadResult(null)
 
     try {
-      const result = await handleImportFile(category.id, file, dispatch)
+      // For sales category, pass the source metadata
+      let meta: any = undefined;
+      if (category.id === 'sales') {
+        meta = {
+          source: {
+            channel: selectedChannel,
+            orderClass: selectedOrderClass || undefined
+          }
+        };
+      } else if (category.id === 'purchase') {
+        meta = {
+          purchaseSource: {
+            vendor: purchaseVendor as PurchaseVendorId,
+            domain: purchaseVendor === 'custom' ? normalizeDomain(customDomain) : undefined
+          }
+        };
+      }
+
+      const result = await handleImportFile(category.id, file, dispatch, meta)
       
       if (result.success) {
         setUploadResult({
@@ -69,7 +120,7 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
             message: `Imported ${result.rowsCount} rows into ${category.title}`,
             actions: [
               { label: 'Back to Imports', action: () => navigate('/imports') },
-              { label: 'View Timeline', action: () => navigate('/orders/timeline') }
+              { label: 'View Timeline', action: () => navigate('/timeline') }
             ]
           })
         }
@@ -95,6 +146,12 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
     downloadTemplate(category.id)
   }
 
+  // Check if dropzone should be disabled
+  const isDropzoneDisabled = 
+    (category.id === 'sales' && !selectedChannel) ||
+    (category.id === 'purchase' && !purchaseVendor) ||
+    (category.id === 'purchase' && purchaseVendor === 'custom' && (!normalizeDomain(customDomain) || domainError));
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       {/* Header */}
@@ -119,6 +176,115 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Upload File</h2>
             
+            {/* Sales Source Controls */}
+            {category.id === 'sales' && (
+              <div className="mb-6 space-y-4">
+                <div>
+                  <label htmlFor="sales-source-select" className="block text-sm font-medium text-gray-700 mb-2">
+                    Sales source
+                  </label>
+                  <select
+                    id="sales-source-select"
+                    data-testid="sales-source-select"
+                    value={selectedChannel}
+                    onChange={(e) => setSelectedChannel(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select a channel...</option>
+                    {CHANNELS.map(channel => (
+                      <option key={channel.id} value={channel.id}>
+                        {channel.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div>
+                  <label htmlFor="sales-orderclass-select" className="block text-sm font-medium text-gray-700 mb-2">
+                    Order type (optional)
+                  </label>
+                  <select
+                    id="sales-orderclass-select"
+                    data-testid="sales-orderclass-select"
+                    value={selectedOrderClass}
+                    onChange={(e) => setSelectedOrderClass(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {CLASSES.map(cls => (
+                      <option key={cls.id} value={cls.id}>
+                        {cls.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                
+                <p className="text-xs text-gray-500">
+                  Stamped on each row and shown in order timelines.
+                </p>
+              </div>
+            )}
+
+            {/* Purchase Source Controls */}
+            {category.id === 'purchase' && (
+              <div className="mb-6">
+                <div className="mb-3 grid gap-2 sm:grid-cols-[260px_1fr] items-end">
+                  <label className="block">
+                    <div className="text-sm text-slate-600 mb-1">Purchase source</div>
+                    <select
+                      data-testid="purchase-source-select"
+                      className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
+                      value={purchaseVendor}
+                      onChange={e => {
+                        const v = e.target.value as PurchaseVendorId | '';
+                        setPurchaseVendor(v);
+                        if (v !== 'custom') {
+                          setCustomDomain('');
+                          setDomainError(null);
+                        }
+                      }}
+                    >
+                      <option value="">— Select —</option>
+                      {PURCHASE_VENDORS.map(o => (
+                        <option key={o.id} value={o.id}>{o.label}</option>
+                      ))}
+                    </select>
+                  </label>
+
+                  {purchaseVendor === 'custom' && (
+                    <label className="block">
+                      <div className="text-sm text-slate-600 mb-1">Domain</div>
+                      <input
+                        data-testid="purchase-source-domain"
+                        className={`w-full rounded-md border px-3 py-2 text-sm ${
+                          domainError ? 'border-red-400' : 'border-slate-300'
+                        }`}
+                        placeholder="e.g., bhphotovideo.com"
+                        value={customDomain}
+                        onChange={e => {
+                          setCustomDomain(e.target.value);
+                          const d = normalizeDomain(e.target.value);
+                          setDomainError(d ? null : 'Enter a valid domain');
+                        }}
+                        onBlur={() => {
+                          const d = normalizeDomain(customDomain);
+                          if (!d) setDomainError('Enter a valid domain');
+                          else {
+                            setCustomDomain(d);
+                            setDomainError(null);
+                          }
+                        }}
+                      />
+                      {domainError && <div className="mt-1 text-xs text-red-500">{domainError}</div>}
+                    </label>
+                  )}
+                </div>
+
+                <p data-testid="purchase-source-help" className="text-xs text-slate-500 mb-2">
+                  The selected source will be stamped on each row and used in reconciliation & timelines.
+                </p>
+              </div>
+            )}
+            
             {/* Dropzone */}
             <div
               data-testid="imp-dropzone"
@@ -126,7 +292,7 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
                 isDragging
                   ? 'border-indigo-500 bg-indigo-50'
                   : 'border-gray-300 hover:border-gray-400'
-              } ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
+              } ${isUploading || isDropzoneDisabled ? 'opacity-50 pointer-events-none' : ''}`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
@@ -135,6 +301,16 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
                 <div className="flex flex-col items-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-4"></div>
                   <p className="text-gray-600">Processing file...</p>
+                </div>
+              ) : isDropzoneDisabled ? (
+                <div>
+                  <div className="text-4xl mb-4">📁</div>
+                  <p className="text-lg font-medium text-gray-900 mb-2">
+                    {category.id === 'sales' ? 'Select a sales source first' : 'Select a purchase source first'}
+                  </p>
+                  <p className="text-gray-600 mb-4">
+                    Choose a source above to enable file upload
+                  </p>
                 </div>
               ) : (
                 <div>
@@ -185,7 +361,7 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
                       ← Back to Imports
                     </button>
                     <button
-                      onClick={() => navigate('/orders/timeline')}
+                      onClick={() => navigate('/timeline')}
                       className="px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
                     >
                       📊 View Timeline
