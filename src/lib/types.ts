@@ -90,4 +90,4 @@ export interface User {
 }
 
 // File types for CSV mapping
-export type FileType = 'keepa' | 'indiaListings' | 'uspo' | 'events' | 'settlement' | 'userPurchase' | 'userSales'
+export type FileType = 'keepa' | 'indiaListings' | 'uspo' | 'events' | 'settlement'

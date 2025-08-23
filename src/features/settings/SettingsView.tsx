@@ -7,6 +7,7 @@ import { setMapping } from '../imports/importsSlice'
 import { Rates } from '../../lib/calc/types'
 import { getDefaultRates } from '../../lib/calc/defaults'
 import { FileType } from '../../lib/types'
+import { persistor } from '../../app/store'
 
 const SettingsView: React.FC = () => {
   const dispatch = useDispatch()
@@ -229,7 +230,10 @@ const SettingsView: React.FC = () => {
       
       try {
         await new Promise(resolve => setTimeout(resolve, 1000))
-      localStorage.clear()
+        
+        // Use Redux persistor to purge all data
+        await persistor.purge()
+        
         setSuccess('Data reset successfully. Page will reload...')
         setTimeout(() => window.location.reload(), 2000)
       } catch (err) {

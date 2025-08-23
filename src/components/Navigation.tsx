@@ -1,6 +1,14 @@
 import { NavLink } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
+type NavItem = {
+  to: string;
+  label: string;
+  icon: string;
+  testId: string;
+  description: string;
+  submenu?: NavItem[];
+};
 
 type Props = {
   width: number;
@@ -9,7 +17,7 @@ type Props = {
   onResize: (w: number) => void;
 };
 
-const NAV = [
+const NAV: NavItem[] = [
   { 
     to: "/dashboard", 
     label: "Dashboard", 
@@ -33,15 +41,31 @@ const NAV = [
   },
   { 
     to: "/orders", 
-    label: "Order Management", 
+    label: "Orders & Checklist", 
     icon: "📦", 
     testId: "nav-orders",
-    description: "Track orders and compliance"
+    description: "Track orders and compliance",
+    submenu: [
+      {
+        to: "/orders",
+        label: "Order Management",
+        icon: "📋",
+        testId: "nav-orders-main",
+        description: "Main order management interface"
+      },
+      {
+        to: "/orders/timeline",
+        label: "Customer Order Timeline",
+        icon: "📅",
+        testId: "nav-order-timeline",
+        description: "Customer order status and events"
+      }
+    ]
   },
   { 
     to: "/timeline", 
-    label: "Order Timeline", 
-    icon: "📅", 
+    label: "Supply Chain Timeline", 
+    icon: "🔗", 
     testId: "nav-timeline",
     description: "Unified view of sales and purchase events"
   },
@@ -100,6 +124,25 @@ export default function Sidebar({ width, collapsed, onToggle, onResize }: Props)
   const ref = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set());
+
+  // Auto-expand Orders submenu when on order-related pages
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    if (currentPath.startsWith('/orders')) {
+      setExpandedMenus(prev => new Set([...prev, '/orders']));
+    }
+  }, [window.location.pathname]);
+
+  const toggleSubmenu = (menuKey: string) => {
+    const newExpanded = new Set(expandedMenus);
+    if (newExpanded.has(menuKey)) {
+      newExpanded.delete(menuKey);
+    } else {
+      newExpanded.add(menuKey);
+    }
+    setExpandedMenus(newExpanded);
+  };
 
   useEffect(() => {
     if (!dragging) return;
@@ -122,6 +165,95 @@ export default function Sidebar({ width, collapsed, onToggle, onResize }: Props)
     (window as any)._scp_startX = e.clientX;
     (window as any)._scp_startW = width;
     setDragging(true);
+  };
+
+  const renderNavItem = (item: NavItem, index: number, isSubmenu = false) => {
+    const hasSubmenu = item.submenu && item.submenu.length > 0;
+    const isExpanded = expandedMenus.has(item.to);
+    const isActive = window.location.pathname === item.to || 
+                    (hasSubmenu && item.submenu!.some((sub: NavItem) => window.location.pathname === sub.to));
+
+    return (
+      <li key={item.to}>
+        <div className="relative">
+          <NavLink
+            to={item.to}
+            data-testid={item.testId}
+            className={({ isActive: navIsActive }) =>
+              `group relative flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
+                isActive 
+                  ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25' 
+                  : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+              } ${
+                hoveredItem === item.to ? 'scale-105' : ''
+              } ${isSubmenu ? 'ml-4' : ''}`
+            }
+            title={collapsed ? `${item.label} - ${item.description}` : item.description}
+            onMouseEnter={() => setHoveredItem(item.to)}
+            onMouseLeave={() => setHoveredItem(null)}
+            style={{
+              animationDelay: `${index * 50}ms`
+            }}
+          >
+            {/* Icon */}
+            <span className={`flex-shrink-0 w-5 h-5 flex items-center justify-center text-base transition-transform duration-200 ${
+              hoveredItem === item.to ? 'scale-110' : ''
+            }`}>
+              {item.icon}
+            </span>
+            
+            {/* Label */}
+            {!collapsed && (
+              <span className="flex-1 truncate transition-all duration-200">
+                {item.label}
+              </span>
+            )}
+            
+            {/* Submenu toggle arrow */}
+            {hasSubmenu && !collapsed && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleSubmenu(item.to);
+                }}
+                className="flex-shrink-0 w-4 h-4 flex items-center justify-center transition-transform duration-200"
+              >
+                <svg 
+                  className={`w-3 h-3 transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`} 
+                  fill="currentColor" 
+                  viewBox="0 0 20 20"
+                >
+                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                </svg>
+              </button>
+            )}
+            
+            {/* Hover effect */}
+            <div className={`absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-600/10 rounded-lg opacity-0 transition-opacity duration-200 ${
+              hoveredItem === item.to ? 'opacity-100' : ''
+            }`} />
+            
+            {/* Tooltip for collapsed state */}
+            {collapsed && (
+              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                {item.label}
+                <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
+              </div>
+            )}
+          </NavLink>
+          
+          {/* Submenu */}
+          {hasSubmenu && !collapsed && isExpanded && (
+            <ul className="mt-1 space-y-1">
+              {item.submenu!.map((subItem: NavItem, subIndex: number) => 
+                renderNavItem(subItem, subIndex, true)
+              )}
+            </ul>
+          )}
+        </div>
+      </li>
+    );
   };
 
   return (
@@ -170,58 +302,7 @@ export default function Sidebar({ width, collapsed, onToggle, onResize }: Props)
       {/* Navigation Items */}
       <nav className="flex-1 px-3 py-4 overflow-y-auto min-h-0">
         <ul className="space-y-1 nav-list h-full">
-          {NAV.map((item, index) => (
-            <li key={item.to}>
-              <NavLink
-                to={item.to}
-                data-testid={item.testId}
-                className={({ isActive }) =>
-                  `group relative flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
-                    isActive 
-                      ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25' 
-                      : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                  } ${
-                    hoveredItem === item.to ? 'scale-105' : ''
-                  }`
-                }
-                title={collapsed ? `${item.label} - ${item.description}` : item.description}
-                onMouseEnter={() => setHoveredItem(item.to)}
-                onMouseLeave={() => setHoveredItem(null)}
-                style={{
-                  animationDelay: `${index * 50}ms`
-                }}
-              >
-                {/* Active indicator - will be handled by background gradient */}
-                
-                {/* Icon */}
-                <span className={`flex-shrink-0 w-5 h-5 flex items-center justify-center text-base transition-transform duration-200 ${
-                  hoveredItem === item.to ? 'scale-110' : ''
-                }`}>
-                  {item.icon}
-                </span>
-                
-                {/* Label */}
-                {!collapsed && (
-                  <span className="flex-1 truncate transition-all duration-200">
-                    {item.label}
-                  </span>
-                )}
-                
-                {/* Hover effect */}
-                <div className={`absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-600/10 rounded-lg opacity-0 transition-opacity duration-200 ${
-                  hoveredItem === item.to ? 'opacity-100' : ''
-                }`} />
-                
-                {/* Tooltip for collapsed state */}
-                {collapsed && (
-                  <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                    {item.label}
-                    <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
-                  </div>
-                )}
-              </NavLink>
-            </li>
-          ))}
+          {NAV.map((item, index) => renderNavItem(item, index))}
         </ul>
       </nav>
 

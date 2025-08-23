@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { CategorySchema } from './categorySchemas'
-import { handleImportFile, downloadTemplate } from './upload'
+import { importFile, downloadTemplate } from './upload'
 import { setTimelineData, setIngestResult } from '../orders/ordersSlice'
 import { PURCHASE_VENDOR_LABELS, type PurchaseVendorId, normalizeDomain } from '../../types/purchase'
 import { CHANNEL_LABELS } from '../../lib/types'
@@ -25,7 +25,7 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
 
   // Sales source state
   const [selectedChannel, setSelectedChannel] = useState('')
-  const [selectedOrderClass, setSelectedOrderClass] = useState('')
+  const [selectedAmazonAccount, setSelectedAmazonAccount] = useState('')
 
   // Purchase source state
   const [purchaseVendor, setPurchaseVendor] = useState<PurchaseVendorId | ''>('')
@@ -33,17 +33,20 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
   const [domainError, setDomainError] = useState<string | null>(null)
 
   const CHANNELS = [
-    { id: 'amazon_in', label: 'Amazon Seller Central (IN)' },
+    { id: 'amazon_seller_central', label: 'Amazon Seller Central' },
     { id: 'flipkart',  label: 'Flipkart' },
     { id: 'poshace',   label: CHANNEL_LABELS.poshace },
     { id: 'website',   label: 'Website' },
     { id: 'other',     label: 'Other' }
   ] as const;
 
-  const CLASSES = [
-    { id: '',    label: '— Not specified —' },
-    { id: 'b2b', label: 'B2B' },
-    { id: 'b2c', label: 'B2C' }
+  const AMAZON_ACCOUNTS = [
+    { id: 'DG', label: 'DG' },
+    { id: 'PT', label: 'PT' },
+    { id: 'PRT', label: 'PRT' },
+    { id: 'NKM', label: 'NKM' },
+    { id: 'DJ', label: 'DJ' },
+    { id: 'IM', label: 'IM' }
   ] as const;
 
   const PURCHASE_VENDORS: { id: PurchaseVendorId; label: string }[] = [
@@ -81,30 +84,28 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
     }
   }, [])
 
-  const handleFileUpload = async (file: File) => {
+  const handleFileUpload = async (file: File | undefined) => {
+    if (!file) return
+    
     setIsUploading(true)
     setUploadResult(null)
 
     try {
       // For sales category, pass the source metadata
-      let meta: any = undefined;
+      let sourceInfo: any = undefined;
       if (category.id === 'sales') {
-        meta = {
-          source: {
-            channel: selectedChannel,
-            orderClass: selectedOrderClass || undefined
-          }
+        sourceInfo = {
+          channel: selectedChannel,
+          amazonAccount: selectedChannel === 'amazon_seller_central' ? selectedAmazonAccount : undefined
         };
       } else if (category.id === 'purchase') {
-        meta = {
-          purchaseSource: {
-            vendor: purchaseVendor as PurchaseVendorId,
-            domain: purchaseVendor === 'custom' ? normalizeDomain(customDomain) : undefined
-          }
+        sourceInfo = {
+          vendor: purchaseVendor,
+          domain: purchaseVendor === 'custom' ? customDomain : undefined
         };
       }
 
-      const result = await handleImportFile(category.id, file, dispatch, meta)
+      const result = await importFile(file, category.id, sourceInfo)
       
       if (result.success) {
         setUploadResult({
@@ -149,8 +150,14 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
   // Check if dropzone should be disabled
   const isDropzoneDisabled = 
     (category.id === 'sales' && !selectedChannel) ||
+    (category.id === 'sales' && selectedChannel === 'amazon_seller_central' && !selectedAmazonAccount) ||
     (category.id === 'purchase' && !purchaseVendor) ||
     (category.id === 'purchase' && purchaseVendor === 'custom' && (!normalizeDomain(customDomain) || domainError));
+
+  // Check if expected columns should be shown for sales
+  const shouldShowExpectedColumns = 
+    category.id !== 'sales' || 
+    (selectedChannel && (selectedChannel !== 'amazon_seller_central' || selectedAmazonAccount));
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -187,7 +194,12 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
                     id="sales-source-select"
                     data-testid="sales-source-select"
                     value={selectedChannel}
-                    onChange={(e) => setSelectedChannel(e.target.value)}
+                    onChange={(e) => {
+                      setSelectedChannel(e.target.value)
+                      if (e.target.value !== 'amazon_seller_central') {
+                        setSelectedAmazonAccount('')
+                      }
+                    }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Select a channel...</option>
@@ -199,24 +211,27 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
                   </select>
                 </div>
                 
-                <div>
-                  <label htmlFor="sales-orderclass-select" className="block text-sm font-medium text-gray-700 mb-2">
-                    Order type (optional)
-                  </label>
-                  <select
-                    id="sales-orderclass-select"
-                    data-testid="sales-orderclass-select"
-                    value={selectedOrderClass}
-                    onChange={(e) => setSelectedOrderClass(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    {CLASSES.map(cls => (
-                      <option key={cls.id} value={cls.id}>
-                        {cls.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                {selectedChannel === 'amazon_seller_central' && (
+                  <div>
+                    <label htmlFor="amazon-account-select" className="block text-sm font-medium text-gray-700 mb-2">
+                      Amazon Seller Central Account
+                    </label>
+                    <select
+                      id="amazon-account-select"
+                      data-testid="amazon-account-select"
+                      value={selectedAmazonAccount}
+                      onChange={(e) => setSelectedAmazonAccount(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Select an account...</option>
+                      {AMAZON_ACCOUNTS.map(account => (
+                        <option key={account.id} value={account.id}>
+                          {account.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
                 
                 <p className="text-xs text-gray-500">
                   Stamped on each row and shown in order timelines.
@@ -306,10 +321,18 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
                 <div>
                   <div className="text-4xl mb-4">📁</div>
                   <p className="text-lg font-medium text-gray-900 mb-2">
-                    {category.id === 'sales' ? 'Select a sales source first' : 'Select a purchase source first'}
+                    {category.id === 'sales' 
+                      ? (selectedChannel === 'amazon_seller_central' && !selectedAmazonAccount 
+                          ? 'Select an Amazon account first' 
+                          : 'Select a sales source first')
+                      : 'Select a purchase source first'
+                    }
                   </p>
                   <p className="text-gray-600 mb-4">
-                    Choose a source above to enable file upload
+                    {category.id === 'sales' && selectedChannel === 'amazon_seller_central' && !selectedAmazonAccount
+                      ? 'Choose an Amazon Seller Central account above to enable file upload'
+                      : 'Choose a source above to enable file upload'
+                    }
                   </p>
                 </div>
               ) : (
@@ -400,56 +423,74 @@ const ImportCategoryPage: React.FC<ImportCategoryPageProps> = ({ category }) => 
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Expected Columns</h2>
             
-            {/* Columns Table */}
-            <div className="overflow-x-auto">
-              <table data-testid="imp-columns-table" className="min-w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-2 px-3 font-medium text-gray-900">Column</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-900">Required</th>
-                    <th className="text-left py-2 px-3 font-medium text-gray-900">Example</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {category.schema.map((column, index) => (
-                    <tr key={index} className="border-b border-gray-100">
-                      <td className="py-2 px-3 text-gray-900 font-medium">
-                        {column.label}
-                      </td>
-                      <td className="py-2 px-3">
-                        {column.required ? (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                            Required
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                            Optional
-                          </span>
-                        )}
-                      </td>
-                      <td className="py-2 px-3 text-gray-600 text-sm">
-                        {column.example || '-'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            {!shouldShowExpectedColumns ? (
+              <div className="text-center py-8">
+                <div className="text-4xl mb-4">📋</div>
+                <p className="text-lg font-medium text-gray-900 mb-2">
+                  Select your sales source first
+                </p>
+                <p className="text-gray-600">
+                  Choose a sales source above to see the expected columns
+                </p>
+              </div>
+            ) : (
+              <>
+                {/* Columns Table */}
+                <div className="overflow-x-auto">
+                  <table data-testid="imp-columns-table" className="min-w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left py-2 px-3 font-medium text-gray-900">Column</th>
+                        <th className="text-left py-2 px-3 font-medium text-gray-900">Required</th>
+                        <th className="text-left py-2 px-3 font-medium text-gray-900">Example</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {category.schema
+                        .filter(column => column.key !== 'order-type') // Remove Order Type column
+                        .map((column, index) => (
+                        <tr key={index} className="border-b border-gray-100">
+                          <td className="py-2 px-3 text-gray-900 font-medium">
+                            {column.label}
+                          </td>
+                          <td className="py-2 px-3">
+                            {column.required ? (
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                Required
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                Optional
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-2 px-3 text-gray-600 text-sm">
+                            {column.example || '-'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
 
             {/* Template Download */}
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Get Started</h3>
-              <p className="text-gray-600 mb-4">
-                Download a template file to see the expected format and get started quickly.
-              </p>
-              <button
-                data-testid="imp-template-download"
-                onClick={handleTemplateDownload}
-                className="btn-secondary px-4 py-2 rounded-lg"
-              >
-                📥 Download Template
-              </button>
-            </div>
+            {shouldShowExpectedColumns && (
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Get Started</h3>
+                <p className="text-gray-600 mb-4">
+                  Download a template file to see the expected format and get started quickly.
+                </p>
+                <button
+                  data-testid="imp-template-download"
+                  onClick={handleTemplateDownload}
+                  className="btn-secondary px-4 py-2 rounded-lg"
+                >
+                  📥 Download Template
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -8,6 +8,10 @@ import { PurchaseVendorId, normalizeDomain } from '../../types/purchase'
 import { buildTimeline } from '../timeline/stitcher'
 import { setTimeline } from '../timeline/timelineSlice'
 import { addTimelineData } from './importsSlice'
+import { processCSVDataForTimeline, processImportsDataForTimeline } from '../timeline/timelineProcessor'
+import { normId, canonHeader } from '../../lib/glueNormalize'
+import type { LinkHint } from '../../types/linkHints'
+import { importInternationalShipping } from '../../lib/glueImport'
 
 export interface ImportResult {
   success: boolean
@@ -49,6 +53,34 @@ function normalizeRowVendor(row: any): { vendor: PurchaseVendorId; domain?: stri
   return { vendor, domain: domain || undefined };
 }
 
+// 1) Ensure the CSV parser does NOT coerce types (keeps "ARB_..." as string)
+const PARSE_OPTS = {
+  header: true,
+  skipEmptyLines: true,
+  dynamicTyping: false,            // <— important
+  transformHeader: (h: string) => h.trim(),
+};
+
+// Normalize category keys to prevent drift (more robust)
+function normalizeCategoryKey(categoryId: string) {
+  const k = (categoryId || '').toLowerCase().trim();
+  if (k.includes('international') || k.includes('shipping') || k === 'glue') return 'glue';
+  if (k.startsWith('purch')) return 'purchase';
+  if (k.startsWith('sale')) return 'sales';
+  if (k === 'buy' || k === 'procurement') return 'purchase';
+  return k; // fall back, but keep it lowercase
+}
+
+// Old glue processing function removed - now using comprehensive importInternationalShipping
+
+// 2) After you map headers to schema, normalize per category
+function normalizeImportedRow(row: any, category: "sales" | "purchase" | string) {
+  // keep original value safe
+  // ASIN/SKU normalization removed - glue-only matching
+  
+  return row;
+}
+
 // Normalize column names to lowercase and trim whitespace
 const normalizeColumnName = (column: string): string => {
   return column
@@ -63,6 +95,11 @@ const coerceValue = (value: string, key: string): string | number | Date | null 
   if (!value || value.trim() === '') return null
   
   const trimmed = value.trim()
+
+  // Special handling for SKU fields - always keep as string
+  if (key.toLowerCase().includes('sku') || key.toLowerCase().includes('asin')) {
+    return trimmed
+  }
 
   // Try to parse as currency/number (handles $/€/£/₹, commas, and parentheses for negatives)
   const numericCandidateRaw = trimmed.replace(/[,]/g, '')
@@ -98,80 +135,20 @@ const coerceValue = (value: string, key: string): string | number | Date | null 
 const mapHeadersToSchema = (headers: string[], schema: CategorySchema): Map<number, string> => {
   const mapping = new Map<number, string>()
   const normalizedHeaders = headers.map(normalizeColumnName)
-  const schemaKeys = schema.schema.map(col => col.key)
   
-  headers.forEach((header, index) => {
-    const normalized = normalizedHeaders[index]
-    
-    // Direct match
-    if (schemaKeys.includes(normalized)) {
-      mapping.set(index, normalized)
-      return
-    }
-    
-    // Handle common variations - Amazon Seller Central format
-    const variations: Record<string, string[]> = {
-      'order-id': ['order_id', 'orderid', 'order id'],
-      'order-item-id': ['order_item_id', 'orderitemid', 'order item id'],
-      'purchase-date': ['purchase_date', 'purchasedate', 'order_date', 'order date'],
-      'payments-date': ['payments_date', 'paymentsdate', 'payment_date'],
-      'reporting-date': ['reporting_date', 'reportingdate'],
-      'promise-date': ['promise_date', 'promisedate'],
-      'days-past-promise': ['days_past_promise', 'dayspastpromise'],
-      'buyer-email': ['buyer_email', 'buyeremail', 'buyer email'],
-      'buyer-name': ['buyer_name', 'buyername', 'buyer name'],
-      'buyer-phone-number': ['buyer_phone_number', 'buyerphonenumber', 'buyer phone number'],
-      'sku': ['product_sku', 'productsku'],
-      'product-name': ['product_name', 'productname', 'title', 'product title'],
-      'quantity-purchased': ['quantity_purchased', 'quantitypurchased', 'qty', 'quantity'],
-      'quantity-shipped': ['quantity_shipped', 'quantityshipped'],
-      'quantity-to-ship': ['quantity_to_ship', 'quantitytoship'],
-      'ship-service-level': ['ship_service_level', 'shipservicelevel'],
-      'recipient-name': ['recipient_name', 'recipientname'],
-      'ship-address-1': ['ship_address_1', 'shipaddress1', 'address_1'],
-      'ship-address-2': ['ship_address_2', 'shipaddress2', 'address_2'],
-      'ship-address-3': ['ship_address_3', 'shipaddress3', 'address_3'],
-      'ship-city': ['ship_city', 'shipcity', 'city'],
-      'ship-state': ['ship_state', 'shipstate', 'state'],
-      'ship-postal-code': ['ship_postal_code', 'shippostalcode', 'postal_code', 'pincode'],
-      'ship-country': ['ship_country', 'shipcountry', 'country'],
-      'is-business-order': ['is_business_order', 'isbusinessorder'],
-      'purchase-order-number': ['purchase_order_number', 'purchaseordernumber'],
-      'price-designation': ['price_designation', 'pricedesignation'],
-      'is-iba': ['is_iba', 'isiba'],
-      'verge-of-cancellation': ['verge_of_cancellation', 'vergeofcancellation'],
-      'verge-of-lateShipment': ['verge_of_lateshipment', 'vergeoflateshipment', 'verge-of-lateshipment']
-    }
-    
-    // Check variations
-    for (const [schemaKey, variants] of Object.entries(variations)) {
-      if (variants.includes(normalized) && schemaKeys.includes(schemaKey)) {
-        mapping.set(index, schemaKey)
-        return
-      }
-    }
-
-    // Additional Purchase category variations (Amazon.com Business purchases)
-    const purchaseVariations: Record<string, string[]> = {
-      'po_id': ['po-number', 'po', 'po number', 'order-id', 'order id'],
-      'order_date': ['order-date'],
-      'supplier': ['seller-name', 'seller credentials', 'seller-credentials', 'seller'],
-      'asin': ['asin'],
-      'sku': ['sku', 'part-number', 'item-model-number', 'part number', 'item model number'],
-      'title': ['title', 'product title'],
-      'qty': ['order-quantity', 'item-quantity', 'shipment-quantity', 'received-quantity'],
-      'unit_cost': ['purchase-ppu', 'listed-ppu', 'unit-price', 'unit price', 'item-net-total', 'item_net_total'],
-      'ship_to': ['shipping-address', 'ship-to', 'ship to'],
-      'tracking': ['carrier-tracking', 'carrier-tracking-', 'tracking-number', 'tracking_no', 'tracking no', 'trackingnumber'],
-      'carrier': ['carrier-name'],
-      'invoice_no': ['po-line-item-id', 'invoice-no', 'invoice number']
-    }
-
-    for (const [schemaKey, variants] of Object.entries(purchaseVariations)) {
-      if (variants.includes(normalized) && schemaKeys.includes(schemaKey)) {
-        mapping.set(index, schemaKey)
-        return
-      }
+  // Create a map of schema keys to their normalized versions
+  const schemaKeyMap = new Map<string, string>()
+  schema.schema.forEach(col => {
+    schemaKeyMap.set(normalizeColumnName(col.key), col.key)
+  })
+  
+  // Map headers to schema columns
+  normalizedHeaders.forEach((header, index) => {
+    if (schemaKeyMap.has(header)) {
+      mapping.set(index, schemaKeyMap.get(header)!)
+    } else {
+      // For any unmapped columns, use the original header as the key
+      mapping.set(index, headers[index])
     }
   })
   
@@ -238,316 +215,217 @@ const parseFile = async (file: File): Promise<{ headers: string[], rows: string[
   return { headers, rows }
 }
 
-// Main import function
-export const handleImportFile = async (
-  categoryId: string,
-  file: File,
-  dispatch?: any,
-  meta?: ImportMeta
-): Promise<ImportResult> => {
-  const schema = getCategorySchema(categoryId)
-  if (!schema) {
-    return {
-      success: false,
-      rowsCount: 0,
-      errors: [`Unknown category: ${categoryId}`],
-      warnings: [],
-      categoryId
-    }
-  }
-  
-  try {
-    // Parse file
-    const { headers, rows } = await parseFile(file)
-    
-    if (headers.length === 0) {
-      return {
-        success: false,
-        rowsCount: 0,
-        errors: ['No headers found in file'],
-        warnings: [],
-        categoryId
+// Flexible import function that handles any columns and skips empty ones
+const flexibleImport = (file: File, categoryId: string, sourceInfo?: any): Promise<ImportResult> => {
+  return new Promise(async (resolve) => {
+    try {
+      console.log(`🔄 Starting flexible import for ${categoryId}:`, file.name)
+      
+      const text = await file.text()
+      const lines = text.split('\n').filter((line: string) => line.trim() !== '')
+      
+      if (lines.length < 2) {
+        resolve({
+          success: false,
+          rowsCount: 0,
+          errors: ['File must contain at least a header row and one data row'],
+          warnings: [],
+          categoryId
+        })
+        return
       }
-    }
-    
-    // Map headers to schema
-    const headerMapping = mapHeadersToSchema(headers, schema)
-    const warnings: string[] = []
-    
-    // Check for unmapped headers (filter noisy known purchase fields)
-    const normalizedHeaders = headers.map(normalizeColumnName)
-    const unmappedIndexes = normalizedHeaders
-      .map((h, i) => ({ h, i }))
-      .filter(({ i }) => !headerMapping.has(i))
-
-    const ignoredPurchaseHeaders = new Set<string>([
-      'account-group','currency','order-subtotal','order-shipping-handling','order-promotion','order-tax','order-net-total','order-status','approver','account-user','account-user-email',
-      'shipment-date','shipment-status','delivery-status','expected-delivery-date','shipment-subtotal','shipment-shipping-handling','shipment-promotion','shipment-tax','shipment-net-total',
-      'amazon-internal-product-category','unspsc','segment','family','class','commodity','brand-code','brand','manufacturer','national-stock-number','product-condition','company-compliance',
-      'item-subtotal','item-shipping-handling','item-promotion','item-tax','item-net-total','tax-exemption-applied','tax-exemption-type','tax-exemption-opt-out','pricing-savings-program','pricing-discount-applied',
-      'receiving-status','received-date','receiver-name','receiver-email','gl-code','department','cost-center','project-code','location','custom-field-1'
-    ])
-
-    const unmappedHeaders = (categoryId === 'purchase')
-      ? unmappedIndexes
-          .filter(({ h }) => !ignoredPurchaseHeaders.has(h))
-          .map(({ i }) => headers[i])
-      : unmappedIndexes.map(({ i }) => headers[i])
-    
-    // For purchase imports, suppress unmapped warnings entirely to avoid noise from Amazon Business extras
-    if (unmappedHeaders.length > 0 && categoryId !== 'purchase') {
-      warnings.push(`Unmapped columns: ${unmappedHeaders.join(', ')}`)
-    }
-    
-    // Normalize rows
-    let normalizedRows: NormalizedRecord[] = []
-    const errors: string[] = []
-    
-    rows.forEach((row, rowIndex) => {
-      try {
-        const normalized = normalizeRow(row, headerMapping, schema)
-        // For purchase category, do not hard-fail on missing fields
-        if (categoryId === 'purchase') {
-          normalizedRows.push(normalized)
-          return
-        }
-        const rowErrors = validateRequiredFields(normalized, schema)
+      
+      // Use the existing parseFile function to handle both CSV and TSV files properly
+      console.log(`🔍 Parsing file with robust CSV/TSV parser...`)
+      const { headers, rows: dataRows } = await parseFile(file)
+      
+      console.log(`📊 Found ${headers.length} columns and ${dataRows.length} rows`)
+      console.log('Headers:', headers.slice(0, 10)) // Show first 10 headers
+      
+      const normalizedRows: NormalizedRecord[] = []
+      const warnings: string[] = []
+      
+      dataRows.forEach((values: string[], rowIndex: number) => {
+        const rowData: NormalizedRecord = {}
+        let hasData = false
         
-        if (rowErrors.length > 0) {
-          errors.push(`Row ${rowIndex + 2}: ${rowErrors.join(', ')}`)
-        } else {
-          normalizedRows.push(normalized)
-        }
-      } catch (error) {
-        errors.push(`Row ${rowIndex + 2}: Failed to parse row`)
-      }
-    })
-
-    // Back-compat shim for any old combined IDs
-    function normalizeSource(raw?: { channel?: string; orderClass?: string } | string) {
-      // Accept legacy strings like "flipkart_b2b" or "amazon_in_b2c"
-      if (typeof raw === 'string') {
-        const low = raw.toLowerCase();
-        const fromCombo = (combo: string) => {
-          if (combo.startsWith('flipkart')) return { channel:'flipkart' as const, orderClass: combo.includes('b2b') ? 'b2b' : combo.includes('b2c') ? 'b2c' : undefined };
-          if (combo.startsWith('amazon'))   return { channel:'amazon_in' as const, orderClass: combo.includes('b2b') ? 'b2b' : combo.includes('b2c') ? 'b2c' : undefined };
-          if (combo.startsWith('poshace'))  return { channel:'poshace' as const, orderClass: combo.includes('b2b') ? 'b2b' : combo.includes('b2c') ? 'b2c' : undefined };
-          if (combo.startsWith('website'))  return { channel:'website' as const, orderClass: combo.includes('b2b') ? 'b2b' : combo.includes('b2c') ? 'b2c' : undefined };
-          return { channel:'other' as const, orderClass: undefined };
-        };
-        return fromCombo(low);
-      }
-      const ch = raw?.channel as any;
-      const oc = raw?.orderClass as any;
-      const allowedCh = ['amazon_in','flipkart','poshace','website','other'];
-      const allowedOc = ['b2b','b2c'];
-      return {
-        channel: allowedCh.includes(ch) ? ch : 'other',
-        orderClass: allowedOc.includes(oc) ? oc : undefined
-      } as { channel: 'amazon_in'|'flipkart'|'poshace'|'website'|'other'; orderClass?: 'b2b'|'b2c' };
-    }
-
-    if (categoryId === 'sales') {
-      const src = normalizeSource(meta?.source ?? 'other');
-      normalizedRows = normalizedRows.map(r => {
-        // If legacy r.source exists as string like "flipkart_b2b", normalize it; 
-        // else stamp from meta:
-        const existing = (r as any).source;
-        const stamped = existing ? normalizeSource(existing) : src;
-        return { ...r, source: stamped };
-      });
-    }
-
-    if (categoryId === 'purchase') {
-      const fromMeta = meta?.purchaseSource
-        ? {
-            vendor: normalizeVendor(meta.purchaseSource.vendor),
-            domain:
-              normalizeVendor(meta.purchaseSource.vendor) === 'custom'
-                ? normalizeDomain(meta.purchaseSource.domain || '')
-                : undefined
-          }
-        : undefined;
-
-      normalizedRows = normalizedRows.map(r => {
-        const legacy = normalizeRowVendor(r);
-        const stamped = legacy ?? fromMeta;
-        return stamped ? { ...r, purchaseSource: stamped } : r;
-      });
-    }
-    
-    // Call bulk ingestion system (always for purchase; else only when we have rows)
-    if (normalizedRows.length > 0 || categoryId === 'purchase') {
-      try {
-        console.log('Starting bulk ingestion for', normalizedRows.length, 'rows')
-        
-        // Process the actual file data through the ingest system
-        const ingestResult = await processBulkIngestion([{
-          name: file.name,
-          text: await file.text(), // Get the actual file content
-          arrayBuffer: undefined
-        }], categoryId)
-        
-        console.log('Bulk ingestion result:', ingestResult)
-        
-        // Store results in Redux (skip timeline update for purchase imports)
-        if (ingestResult && dispatch && categoryId !== 'purchase') {
-          dispatch(setTimelineData({
-            timeline: ingestResult.timeline,
-            summaries: ingestResult.summaries
-          }))
-          dispatch(setIngestResult(ingestResult))
-        }
-        // Always keep full ingest result for reconciliation panels
-        if (ingestResult && dispatch && categoryId === 'purchase') {
-          dispatch(setIngestResult(ingestResult))
-        }
-
-        // Store imported rows for timeline stitching (AFTER bulk ingestion)
-        if (dispatch && normalizedRows.length > 0) {
-          console.log(`📥 Storing ${normalizedRows.length} rows for category: ${categoryId}`);
-          dispatch(addTimelineData({
-            category: categoryId,
-            rows: normalizedRows
-          }))
+        headers.forEach((header: string, colIndex: number) => {
+          const rawValue = values[colIndex]
+          const value = (typeof rawValue === 'string' ? rawValue : String(rawValue || '')).trim()
           
-          // Debug: Check what was actually stored
-          setTimeout(() => {
-            const currentState = store.getState();
-            const storedData = currentState.imports?.timelineData?.[categoryId];
-            console.log(`📊 Verified storage for ${categoryId}:`, storedData?.length || 0, 'rows');
+          // Skip empty columns
+          if (value === '' || value === null || value === undefined) {
+            return
+          }
+          
+          // Normalize column name and map to schema key
+          const normalizedHeader = normalizeColumnName(header)
+          
+          // For SKU fields, ensure we use the correct schema key
+          const fieldKey = normalizedHeader === 'sku' ? 'sku' : normalizedHeader
+          
+          // Debug: Log SKU processing
+          if (fieldKey === 'sku') {
+            console.log(`🔍 Processing SKU: "${value}" -> "${fieldKey}"`)
+          }
+          
+          // Coerce value to appropriate type
+          const coercedValue = coerceValue(value, fieldKey)
+          
+          if (coercedValue !== null) {
+            rowData[fieldKey] = coercedValue
+            hasData = true
             
-            // Also check all categories to see if any data was lost
-            const allTimelineData = currentState.imports?.timelineData;
-            if (allTimelineData) {
-              Object.keys(allTimelineData).forEach(cat => {
-                const count = allTimelineData[cat]?.length || 0;
-                if (count > 0) {
-                  console.log(`📊 Category ${cat}: ${count} rows`);
-                }
-              });
+            // Debug: Log final SKU value
+            if (fieldKey === 'sku') {
+              console.log(`✅ Final SKU value: ${coercedValue} (type: ${typeof coercedValue})`)
             }
-          }, 100);
-        }
+          }
+        })
         
-        // If this is a Purchase import, attempt to match purchase rows to existing orders by ASIN/SKU
-        if (ingestResult && categoryId === 'purchase') {
+        // Only add rows that have at least some data
+        if (hasData) {
+          // Add source information if provided
+          if (sourceInfo) {
+            rowData.source = sourceInfo
+          }
+          
+          // Apply ASIN normalization
+          const normalizedRow = normalizeImportedRow(rowData, categoryId)
+          normalizedRows.push(normalizedRow)
+        } else {
+          warnings.push(`Row ${rowIndex + 2} skipped - no data found`)
+        }
+      })
+      
+      console.log(`✅ Processed ${normalizedRows.length} rows with data`)
+      
+      // Store in timeline data
+      if (normalizedRows.length > 0) {
+        const store = (await import('../../app/store')).store
+        
+        // Normalize category key to prevent drift
+        const categoryKey = normalizeCategoryKey(categoryId);
+        console.log(`[imports] Normalizing category: ${categoryId} -> ${categoryKey}`);
+        
+        // Special handling for glue category using comprehensive import function
+        if (categoryKey === 'glue') {
           try {
-            const prev = (store.getState() as any)?.orders?.ingestResult
-            const prevOrderRows: any[] = prev?.tables?.orders?.rows || []
-            const currentOrderRows: any[] = ingestResult?.tables?.orders?.rows || []
-            // Prefer parsed purchases table; fallback to normalizedRows if not present
-            const purchaseRows: any[] = (ingestResult as any)?.tables?.purchases?.rows?.length
-              ? (ingestResult as any).tables.purchases.rows
-              : (normalizedRows as any[])
+            const result = await importInternationalShipping(file);
+            console.log(`[imports] Glue import result:`, result);
 
-            // Build a set of ASINs from existing orders (derive from SKU if needed)
-            const asinFromSku = (sku?: string): string | null => {
-              if (!sku) return null
-              const m = sku.toUpperCase().match(/\bB0[A-Z0-9]{8}\b/)
-              return m ? m[0] : null
-            }
-            const asinFromAny = (row: any): string | null => {
-              return (
-                (row['ASIN'] as string) ||
-                (row['asin'] as string) ||
-                asinFromSku(row['sku'] as string) ||
-                null
-              )
-            }
-
-            const orderAsins = new Set<string>()
-            ;[...prevOrderRows, ...currentOrderRows].forEach((r) => {
-              const a = asinFromAny(r)
-              if (a) orderAsins.add(a.toUpperCase())
-            })
-
-            let matched = 0
-            let unmatched = 0
-            const examples: string[] = []
-            purchaseRows.forEach((r) => {
-              const a = asinFromAny(r)
-              if (a && orderAsins.has(a.toUpperCase())) matched += 1
-              else {
-                unmatched += 1
-                if (examples.length < 5) {
-                  const title = (r['Title'] || r['title'] || '').toString().slice(0, 60)
-                  examples.push(`${a || 'NO-ASIN'} — ${title}`)
-                }
+            // Rebuild timeline using glue-only processor after successful glue import
+            try {
+              const currentState = store.getState();
+              const timelineData = currentState.imports?.timelineData;
+              if (timelineData) {
+                const rebuilt = processImportsDataForTimeline(timelineData);
+                store.dispatch(setTimeline(rebuilt));
+                console.log('✅ Timeline rebuilt after glue import');
               }
-            })
-
-            if (purchaseRows.length > 0) {
-              warnings.push(`Purchase match summary: ${matched}/${purchaseRows.length} matched by ASIN/SKU, ${unmatched} unmatched`)
+            } catch (rebuildErr) {
+              console.warn('Timeline rebuild after glue import failed:', rebuildErr);
             }
-            if (unmatched > 0) {
-              warnings.push(`Unmatched examples: ${examples.join(' | ')}`)
-            }
-          } catch (e) {
-            // Non-blocking
-            console.warn('Purchase matching failed:', e)
+            
+            resolve({
+              success: result.ok,
+              rowsCount: result.ok ? result.details?.counts?.total || 0 : 0,
+              errors: result.ok ? [] : [result.message],
+              warnings: result.ok ? [] : [result.message],
+              categoryId
+            });
+            return;
+          } catch (error) {
+            console.error('[imports] Glue import error:', error);
+            resolve({
+              success: false,
+              rowsCount: 0,
+              errors: [`Glue import failed: ${error instanceof Error ? error.message : 'Unknown error'}`],
+              warnings: [],
+              categoryId
+            });
+            return;
           }
         }
         
-        // Set test hook for Playwright tests
-        if (typeof window !== 'undefined') {
-          (window as any).__test_lastImport = {
-            category: categoryId,
-            rowsCount: normalizedRows.length,
-            sample: normalizedRows[0],
-            timelineEvents: ingestResult?.events?.length || 0,
-            orderSummaries: ingestResult?.summaries?.length || 0
-          }
+        store.dispatch(addTimelineData({
+          category: categoryKey,
+          rows: normalizedRows
+        }))
+        
+        // Pre-flight check: Show ASIN coverage
+        const rowsWithAsin = normalizedRows.filter(r => !!r.asin).length;
+        console.log(`[imports] ASIN coverage — ${categoryKey}: ${rowsWithAsin}/${normalizedRows.length} rows have ASIN`);
+        if (rowsWithAsin !== normalizedRows.length) {
+          console.warn(`[imports] missing ASIN — ${categoryKey}: ${rowsWithAsin}/${normalizedRows.length} rows have ASIN`);
         }
-
-        // Rebuild timeline after successful import
+        
+        // Rebuild timeline using our new processor with ALL available data
         try {
-          console.log('🔄 Rebuilding timeline...');
-          const currentState = store.getState();
-          console.log('🔍 Current state before rebuild:', {
-            sales: currentState.imports?.timelineData?.sales?.length || 0,
-            purchase: currentState.imports?.timelineData?.purchase?.length || 0
-          });
+          const currentState = store.getState()
+          const timelineData = currentState.imports?.timelineData
           
-          const all = selectAllImportedRowsByCategory(currentState);
-          console.log('📊 Collected data for timeline:', all);
-          
-          if (all.length === 0) {
-            console.log('⚠️ No data found for timeline rebuilding');
-            console.log('🔍 Debugging state structure:');
-            console.log('- imports.timelineData:', currentState.imports?.timelineData);
-            console.log('- imports.byCategory:', currentState.imports?.byCategory);
-            console.log('- orders.ingestResult:', currentState.orders?.ingestResult);
-          } else {
-            console.log('📊 Sample data from first category:', all[0]);
-            const timeline = buildTimeline(all);
-            console.log('📈 Built timeline:', timeline);
-            store.dispatch(setTimeline(timeline));
-            console.log('✅ Timeline updated in store');
+          if (timelineData) {
+            console.log('🔄 Rebuilding timeline with ALL available data...')
+            console.log(`📊 Available data: Sales=${timelineData.sales?.length || 0}, Purchase=${timelineData.purchase?.length || 0}`)
+            
+            // Use our new timeline processor that handles ASIN extraction properly
+            const timeline = processImportsDataForTimeline(timelineData)
+            store.dispatch(setTimeline(timeline))
+            
+            console.log('✅ Timeline rebuilt successfully with new processor')
+            console.log(`📊 Timeline result: ${Object.keys(timeline.byOrder).length} orders, ${timeline.orphan.length} orphan events`)
+            
+            // Show success message
+            if (Object.keys(timeline.byOrder).length > 0) {
+              console.log(`🎉 SUCCESS: Created ${Object.keys(timeline.byOrder).length} unified orders!`)
+            }
           }
         } catch (error) {
-          console.warn('Timeline rebuild failed:', error);
-          console.error('Full error:', error);
+          console.warn('Timeline rebuild failed:', error)
+          warnings.push('Timeline rebuild failed - data imported but not linked')
         }
-      } catch (error) {
-        console.error('Bulk ingestion error:', error)
-        errors.push(`Bulk ingestion failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
       }
+      
+      resolve({
+        success: normalizedRows.length > 0,
+        rowsCount: normalizedRows.length,
+        errors: [],
+        warnings,
+        categoryId
+      })
+      
+    } catch (error) {
+      console.error('Flexible import error:', error)
+      resolve({
+        success: false,
+        rowsCount: 0,
+        errors: [`Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`],
+        warnings: [],
+        categoryId
+      })
     }
+  })
+}
+
+// Main import function
+export const importFile = async (
+  file: File,
+  categoryId: string,
+  sourceInfo?: any
+): Promise<ImportResult> => {
+  try {
+    console.log(`🚀 Starting import for ${categoryId}:`, file.name)
     
-    return {
-      success: errors.length === 0 || normalizedRows.length > 0 || categoryId === 'purchase',
-      rowsCount: normalizedRows.length,
-      errors,
-      warnings,
-      categoryId
-    }
+    // Use flexible import for all categories
+    return await flexibleImport(file, categoryId, sourceInfo)
     
   } catch (error) {
+    console.error('Import error:', error)
     return {
       success: false,
       rowsCount: 0,
-      errors: [`Failed to parse file: ${error instanceof Error ? error.message : 'Unknown error'}`],
+      errors: [`Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`],
       warnings: [],
       categoryId
     }

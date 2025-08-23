@@ -7,6 +7,7 @@ import { ordersReducer } from '../features/orders/ordersSlice'
 import { ratesReducer } from '../features/settings/ratesSlice'
 import usersReducer from '../features/users/usersSlice'
 import timelineReducer from '../features/timeline/timelineSlice'
+import unifiedDataReducer from '../features/unifiedData/unifiedDataSlice'
 
 // Inline reducers for persisted keys
 const settingsReducer = (state = {}, action: any) => {
@@ -33,6 +34,7 @@ const rootReducer = combineReducers({
   orders: ordersReducer, // Orders state (no persistence)
   rates: ratesReducer, // Rates state (persisted)
   timeline: timelineReducer, // Timeline state (no persistence)
+  unifiedData: unifiedDataReducer, // Unified data state (no persistence)
   // TODO: Add other slices when implemented
   // calculator: calculatorReducer,
   // analytics: analyticsReducer,

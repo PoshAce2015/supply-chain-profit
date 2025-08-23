@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { OrderSummary, TimelineEvent, OrderBranch } from '../../lib/imports/ingest'
 import { CHANNEL_LABELS, CLASS_LABELS } from '../../lib/types'
 import dayjs from 'dayjs'
+import { processCSVDataForTimeline } from '../timeline/timelineProcessor'
+import { setTimeline } from '../timeline/timelineSlice'
+import { sampleSalesData, samplePurchaseData } from '../timeline/sampleData'
 
 interface OrderTimelineViewProps {}
 
 const OrderTimelineView: React.FC<OrderTimelineViewProps> = () => {
+  const dispatch = useDispatch()
+  
   // State for filtering and display
   const [searchTerm, setSearchTerm] = useState('')
   const [branchFilter, setBranchFilter] = useState<OrderBranch | 'all'>('all')
@@ -14,23 +19,102 @@ const OrderTimelineView: React.FC<OrderTimelineViewProps> = () => {
   const [sortBy, setSortBy] = useState<'date' | 'amount' | 'status'>('date')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null)
-  const [viewMode, setViewMode] = useState<'timeline' | 'summary' | 'analytics'>('timeline')
+  const [viewMode, setViewMode] = useState<'timeline' | 'summary' | 'analytics'>('summary')
+  
+  // Function to load sample data
+  const handleLoadSampleData = async () => {
+    try {
+      console.log('📁 Loading sample data for Customer Order Timeline...')
+      
+      // Process data directly for timeline
+      const timelineData = processCSVDataForTimeline(sampleSalesData, samplePurchaseData)
+      console.log('📋 Timeline result:', timelineData)
+      dispatch(setTimeline(timelineData))
+      
+      console.log('✅ Sample data loaded successfully for Customer Order Timeline')
+      alert(`Timeline created! ${Object.keys(timelineData.byOrder).length} orders with ${timelineData.orphan.length} orphan events.`)
+    } catch (error) {
+      console.error('❌ Failed to load sample data:', error)
+      alert(`Failed to load sample data: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
 
   // Get data from store (this will be populated by the ingest system)
   const timeline = useSelector((state: any) => state.orders?.timeline || {})
   const summaries = useSelector((state: any) => state.orders?.summaries || [])
   
+  // Also get data from our timeline slice and convert it to the expected format
+  const timelineData = useSelector((state: any) => state.timeline || {})
+  
+  // Convert timeline data to OrderSummary format for Customer Order Timeline
+  const convertedSummaries = useMemo(() => {
+    console.log('🔄 Converting timeline data to OrderSummary format...');
+    console.log('📊 timelineData.byOrder:', timelineData.byOrder);
+    console.log('📊 Object.keys(timelineData.byOrder):', Object.keys(timelineData.byOrder || {}));
+    
+    if (!timelineData.byOrder || Object.keys(timelineData.byOrder).length === 0) {
+      console.log('⚠️ No timeline data found, using original summaries');
+      return summaries
+    }
+    
+    const converted = Object.entries(timelineData.byOrder).map(([orderKey, orderData]: [string, any]) => {
+      console.log(`🔍 Processing order: ${orderKey}`, orderData);
+      
+      const salesEvents = orderData.events.filter((e: any) => e.category === 'sales')
+      const purchaseEvents = orderData.events.filter((e: any) => e.category === 'purchase')
+      
+      console.log(`📊 Order ${orderKey}: ${salesEvents.length} sales, ${purchaseEvents.length} purchases`);
+      
+      // Determine order status based on events
+      let branch: any = 'paid' // default to paid
+      if (salesEvents.length > 0 && purchaseEvents.length > 0) {
+        branch = 'paid' // has both sales and purchase events
+      } else if (salesEvents.length > 0) {
+        branch = 'awaiting_payment' // only sales event
+      } else if (purchaseEvents.length > 0) {
+        branch = 'send_to_fba' // only purchase event
+      }
+      
+      // Calculate dates
+      const firstEvent = orderData.events[0]
+      const lastEvent = orderData.events[orderData.events.length - 1]
+      
+      const summary = {
+        orderId: orderKey,
+        branch: branch,
+        firstSeen: firstEvent?.when || new Date().toISOString(),
+        lastSeen: lastEvent?.when || new Date().toISOString(),
+        paid: salesEvents.length > 0 ? 100 : 0, // placeholder amount
+        refunded: 0, // no refunds in our sample data
+        delta: salesEvents.length > 0 ? 100 : 0, // placeholder amount
+        events: orderData.events
+      }
+      
+      console.log(`✅ Converted order ${orderKey}:`, summary);
+      return summary;
+    })
+    
+    console.log('🎉 Conversion complete. Converted summaries:', converted);
+    return converted;
+  }, [timelineData, summaries])
+  
+  // Use converted summaries if available, otherwise use original summaries
+  const finalSummaries = convertedSummaries.length > 0 ? convertedSummaries : summaries
+  
   // Debug logging
   console.log('OrderTimelineView - Timeline data:', timeline)
-  console.log('OrderTimelineView - Summaries data:', summaries)
+  console.log('OrderTimelineView - Original summaries data:', summaries)
   console.log('OrderTimelineView - Timeline keys:', Object.keys(timeline))
-  console.log('OrderTimelineView - Summaries count:', summaries.length)
+  console.log('OrderTimelineView - Original summaries count:', summaries.length)
+  console.log('OrderTimelineView - TimelineData:', timelineData)
+  console.log('OrderTimelineView - Converted summaries:', convertedSummaries)
+  console.log('OrderTimelineView - Final summaries count:', finalSummaries.length)
   
 
 
   // Filtered and sorted data
   const filteredSummaries = useMemo(() => {
-    let filtered = summaries.filter((summary: OrderSummary) => {
+    let filtered = finalSummaries.filter((summary: OrderSummary) => {
       const matchesSearch = summary.orderId.toLowerCase().includes(searchTerm.toLowerCase())
       const matchesBranch = branchFilter === 'all' || summary.branch === branchFilter
       return matchesSearch && matchesBranch
@@ -65,7 +149,7 @@ const OrderTimelineView: React.FC<OrderTimelineViewProps> = () => {
     })
 
     return filtered
-  }, [summaries, searchTerm, branchFilter, sortBy, sortOrder])
+  }, [finalSummaries, searchTerm, branchFilter, sortBy, sortOrder])
 
   // Branch statistics
   const branchStats = useMemo(() => {
@@ -80,12 +164,12 @@ const OrderTimelineView: React.FC<OrderTimelineViewProps> = () => {
       send_to_fba: 0
     }
 
-    summaries.forEach((summary: OrderSummary) => {
+    finalSummaries.forEach((summary: OrderSummary) => {
       stats[summary.branch]++
     })
 
     return stats
-  }, [summaries])
+  }, [finalSummaries])
 
   // Get branch color and label
   const getBranchInfo = (branch: OrderBranch) => {
@@ -130,6 +214,10 @@ const OrderTimelineView: React.FC<OrderTimelineViewProps> = () => {
                 <p className="mt-1 text-sm text-gray-500">
                   Track order status, payments, and fulfillment events
                 </p>
+                <p className="text-xs text-gray-400 mt-1">
+                  📋 Customer order tracking • 
+                  🔗 For supply chain events (sales + purchases), see <a href="/timeline" className="text-blue-600 hover:underline">Supply Chain Timeline</a>
+                </p>
               </div>
               <div className="flex items-center space-x-3">
                 <button
@@ -171,6 +259,16 @@ const OrderTimelineView: React.FC<OrderTimelineViewProps> = () => {
       {/* Filters and Controls */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          {/* Load Sample Data Button */}
+          <div className="mb-4">
+            <button
+              onClick={handleLoadSampleData}
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              Load Sample Data
+            </button>
+          </div>
+          
           <div className="flex flex-wrap items-center gap-4">
             {/* Search */}
             <div className="flex-1 min-w-64">
@@ -417,10 +515,10 @@ const OrderTimelineView: React.FC<OrderTimelineViewProps> = () => {
                             {dayjs(summary.lastSeen).format('MMM D, YYYY')}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">
-                            ₹{summary.paidToDate.toFixed(2)}
+                            ₹{(summary.paid || 0).toFixed(2)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">
-                            ₹{summary.refundedToDate.toFixed(2)}
+                            ₹{(summary.refunded || 0).toFixed(2)}
                           </td>
                           <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${summary.delta >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                             ₹{summary.delta.toFixed(2)}

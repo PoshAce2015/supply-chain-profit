@@ -12,22 +12,17 @@ interface ImportsState {
     uspo: USPO[]
     events: Event[]
     settlement: Settlement[]
-    // User's specific datasets
-    userPurchase: any[]
-    userSales: any[]
   }
   // New structure for timeline stitching
   timelineData: {
     sales: any[]
     purchase: any[]
+    glue: any[]
     intl_shipment: any[]
     natl_shipment: any[]
     payment: any[]
     refund: any[]
     cancel: any[]
-    // User's specific timeline data
-    userPurchase: any[]
-    userSales: any[]
   }
 }
 
@@ -38,9 +33,6 @@ const initialState: ImportsState = {
     uspo: {},
     events: {},
     settlement: {},
-    // User's specific mappings
-    userPurchase: {},
-    userSales: {},
   },
   datasets: {
     keepa: [],
@@ -48,21 +40,16 @@ const initialState: ImportsState = {
     uspo: [],
     events: [],
     settlement: [],
-    // User's specific datasets
-    userPurchase: [],
-    userSales: [],
   },
   timelineData: {
     sales: [],
     purchase: [],
+    glue: [],
     intl_shipment: [],
     natl_shipment: [],
     payment: [],
     refund: [],
     cancel: [],
-    // User's specific timeline data
-    userPurchase: [],
-    userSales: [],
   },
 }
 
@@ -121,12 +108,6 @@ const importsSlice = createSlice({
         case 'settlement':
           state.datasets.settlement = mappedData as Settlement[]
           break
-        case 'userPurchase':
-          state.datasets.userPurchase = mappedData
-          break
-        case 'userSales':
-          state.datasets.userSales = mappedData
-          break
       }
     },
     // New action for file-based ingestion (supports Excel files)
@@ -168,12 +149,6 @@ const importsSlice = createSlice({
         case 'settlement':
           state.datasets.settlement = data as Settlement[]
           break
-        case 'userPurchase':
-          state.datasets.userPurchase = data
-          break
-        case 'userSales':
-          state.datasets.userSales = data
-          break
       }
     },
     clearDataset: (state, action: PayloadAction<FileType>) => {
@@ -193,12 +168,6 @@ const importsSlice = createSlice({
           break
         case 'settlement':
           state.datasets.settlement = []
-          break
-        case 'userPurchase':
-          state.datasets.userPurchase = []
-          break
-        case 'userSales':
-          state.datasets.userSales = []
           break
       }
     },
@@ -232,6 +201,10 @@ const importsSlice = createSlice({
       if (state.timelineData[key]) {
         state.timelineData[key] = []
       }
+    },
+    addGlueLink: (state, action: PayloadAction<any>) => {
+      state.timelineData.glue ||= [];
+      state.timelineData.glue.push(action.payload);
     },
     // Action to get all timeline data for debugging
     setAllTimelineData: (
@@ -272,11 +245,6 @@ export const processFile = (fileType: FileType, file: File, mapping: Record<stri
       // Set the parsed data
       dispatch(setParsedData({ fileType, data: mappedData }))
       
-      // Also add to timeline data for the user's specific files
-      if (fileType === 'userPurchase' || fileType === 'userSales') {
-        dispatch(addTimelineData({ category: fileType, rows: mappedData }))
-      }
-      
       return { success: true, data: mappedData }
     } catch (error) {
       console.error('File processing error:', error)
@@ -300,6 +268,7 @@ export const {
   clearDataset, 
   addTimelineData, 
   clearTimelineData, 
+  addGlueLink,
   setAllTimelineData 
 } = importsSlice.actions
 export const importsReducer = persistReducer(persistConfig, importsSlice.reducer)
