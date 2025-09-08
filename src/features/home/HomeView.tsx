@@ -636,11 +636,11 @@ export default function HomeView() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-6 px-4 sm:px-6 lg:px-8" role="contentinfo">
+      <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8" role="contentinfo">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-6 mb-6">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
-              <h3 className="font-bold text-lg mb-3">Supply Chain & Profit</h3>
+              <h3 className="font-bold text-lg mb-4">Supply Chain & Profit</h3>
               <p className="text-gray-400 text-sm leading-relaxed">
                 Professional supply chain analytics and profit optimization platform 
                 for e-commerce operations teams.
@@ -648,8 +648,8 @@ export default function HomeView() {
             </div>
             
             <div>
-              <h4 className="font-semibold mb-3">Platform</h4>
-              <ul className="space-y-1 text-sm text-gray-400">
+              <h4 className="font-semibold mb-4">Platform</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
                 <li><Link to="/imports" className="hover:text-white transition-colors">Data Imports</Link></li>
                 <li><Link to="/calculator" className="hover:text-white transition-colors">Profit Calculator</Link></li>
                 <li><Link to="/analytics" className="hover:text-white transition-colors">Analytics</Link></li>
@@ -658,8 +658,8 @@ export default function HomeView() {
             </div>
             
             <div>
-              <h4 className="font-semibold mb-3">Resources</h4>
-              <ul className="space-y-1 text-sm text-gray-400">
+              <h4 className="font-semibold mb-4">Resources</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
                 <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">API Reference</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Support</a></li>
@@ -668,8 +668,8 @@ export default function HomeView() {
             </div>
             
             <div>
-              <h4 className="font-semibold mb-3">Company</h4>
-              <ul className="space-y-1 text-sm text-gray-400">
+              <h4 className="font-semibold mb-4">Company</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
                 <li><a href="#" className="hover:text-white transition-colors">About</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Privacy</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Terms</a></li>
@@ -678,11 +678,11 @@ export default function HomeView() {
             </div>
           </div>
           
-          <div className="border-t border-gray-800 pt-4 flex flex-col sm:flex-row justify-between items-center">
+          <div className="border-t border-gray-800 pt-8 flex flex-col sm:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
               © 2024 Supply Chain & Profit. All rights reserved.
             </p>
-            <div className="flex items-center gap-4 mt-2 sm:mt-0">
+            <div className="flex items-center gap-4 mt-4 sm:mt-0">
               <span className="text-gray-400 text-sm">Version 1.0.1</span>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
