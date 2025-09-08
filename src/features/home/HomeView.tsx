@@ -137,13 +137,12 @@ const faqs = [
 export default function HomeView() {
   const navigate = useNavigate();
   
-  // State management
+  // Simplified state management
   const [currentFeature, setCurrentFeature] = useState(0);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
-  const [visibleSections, setVisibleSections] = useState(new Set<string>());
-  const [isLoading, setIsLoading] = useState(true);
+  const [visibleSections, setVisibleSections] = useState(new Set<string>(['hero'])); // Start with hero visible
   const [userPreferences, setUserPreferences] = useState({ reducedMotion: false, highContrast: false });
 
   // Refs for intersection observer
@@ -154,13 +153,17 @@ export default function HomeView() {
   const statsRef = useRef<HTMLElement>(null);
   const faqRef = useRef<HTMLElement>(null);
 
+  // Set page title
+  useEffect(() => {
+    document.title = 'Supply Chain & Profit - Analytics Platform';
+  }, []);
+
   // Detect user preferences
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const highContrast = window.matchMedia('(prefers-contrast: high)').matches;
     
     setUserPreferences({ reducedMotion, highContrast });
-    setIsLoading(false);
   }, []);
 
   // Auto-rotation for features and testimonials
@@ -177,7 +180,11 @@ export default function HomeView() {
 
   // Intersection observer for scroll animations
   useEffect(() => {
-    if (userPreferences.reducedMotion) return;
+    if (userPreferences.reducedMotion) {
+      // If reduced motion, make all sections visible immediately
+      setVisibleSections(new Set(['hero', 'stats', 'features', 'benefits', 'testimonials', 'faq']));
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -224,18 +231,6 @@ export default function HomeView() {
   const currentFeatureData = useMemo(() => features[currentFeature], [currentFeature]);
   const currentTestimonialData = useMemo(() => testimonials[currentTestimonial], [currentTestimonial]);
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading Supply Chain & Profit Platform...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       {/* Skip to content link for accessibility */}
@@ -246,415 +241,399 @@ export default function HomeView() {
         Skip to main content
       </a>
 
-      {/* Hero Section */}
-      <section 
-        ref={heroRef}
-        id="hero"
-        className={`relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${
-          visibleSections.has('hero') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-        role="banner"
-        aria-label="Platform introduction"
-      >
-        {/* Background decoration */}
-        <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-          <div className="absolute -top-40 -right-32 w-80 h-80 bg-gradient-to-br from-purple-400 to-indigo-600 rounded-full opacity-10 blur-3xl"></div>
-          <div className="absolute -bottom-40 -left-32 w-80 h-80 bg-gradient-to-tr from-blue-400 to-cyan-600 rounded-full opacity-10 blur-3xl"></div>
-        </div>
-
-        <div className="relative max-w-7xl mx-auto text-center">
-          <div className="mb-8">
-            <div className="inline-flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-indigo-200 mb-6">
-              <span className="text-indigo-600 font-medium text-sm">🚀 Version 1.0 Now Available</span>
-            </div>
-            
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Supply Chain & Profit
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
-                Analytics Platform
-              </span>
-            </h1>
-            
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Transform your e-commerce operations with comprehensive data analysis, 
-              real-time profit calculations, and intelligent supply chain monitoring. 
-              Process thousands of orders locally with enterprise-grade precision.
-            </p>
+      <main id="main-content">
+        {/* Hero Section */}
+        <section 
+          ref={heroRef}
+          id="hero"
+          className="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8"
+          role="banner"
+          aria-label="Platform introduction"
+        >
+          {/* Background decoration */}
+          <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+            <div className="absolute -top-40 -right-32 w-80 h-80 bg-gradient-to-br from-purple-400 to-indigo-600 rounded-full opacity-10 blur-3xl"></div>
+            <div className="absolute -bottom-40 -left-32 w-80 h-80 bg-gradient-to-tr from-blue-400 to-cyan-600 rounded-full opacity-10 blur-3xl"></div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <button
-              onClick={handleGetStarted}
-              className="group relative px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
-              aria-label="Get started with the platform"
-            >
-              <span className="relative z-10">Get Started Free</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-700 to-purple-700 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </button>
-            
-            <button
-              onClick={handleViewDemo}
-              className="px-8 py-4 bg-white text-indigo-600 font-semibold rounded-xl border-2 border-indigo-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
-              aria-label="View platform demo"
-            >
-              View Live Demo
-            </button>
-          </div>
+          <div className="relative max-w-7xl mx-auto text-center">
+            <div className="mb-8">
+              <div className="inline-flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-indigo-200 mb-6">
+                <span className="text-indigo-600 font-medium text-sm">🚀 Version 1.0 Now Available</span>
+              </div>
+              
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                Supply Chain & Profit
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
+                  Analytics Platform
+                </span>
+              </h1>
+              
+              <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+                Transform your e-commerce operations with comprehensive data analysis, 
+                real-time profit calculations, and intelligent supply chain monitoring. 
+                Process thousands of orders locally with enterprise-grade precision.
+              </p>
+            </div>
 
-          {/* Trust indicators */}
-          <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              <span>100% Local Processing</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              <span>No Data Transmission</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              <span>Enterprise Security</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section 
-        ref={statsRef}
-        id="stats"
-        className={`py-16 px-4 sm:px-6 lg:px-8 bg-white/50 backdrop-blur-sm transition-all duration-1000 delay-200 ${
-          visibleSections.has('stats') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-        aria-label="Platform statistics"
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div 
-                key={stat.label}
-                className={`text-center transition-all duration-500 ${
-                  visibleSections.has('stats') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-                }`}
-                style={{ transitionDelay: `${index * 100}ms` }}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+              <button
+                onClick={handleGetStarted}
+                className="group relative px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
+                aria-label="Get started with the platform"
               >
-                <div className="text-3xl lg:text-4xl font-bold text-indigo-600 mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-gray-900 font-medium mb-1">{stat.label}</div>
-                <div className="text-sm text-gray-600">{stat.description}</div>
+                <span className="relative z-10">Get Started Free</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-700 to-purple-700 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </button>
+              
+              <button
+                onClick={handleViewDemo}
+                className="px-8 py-4 bg-white text-indigo-600 font-semibold rounded-xl border-2 border-indigo-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
+                aria-label="View platform demo"
+              >
+                View Live Demo
+              </button>
+            </div>
+
+            {/* Trust indicators */}
+            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                <span>100% Local Processing</span>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section 
-        ref={featuresRef}
-        id="features"
-        className={`py-20 px-4 sm:px-6 lg:px-8 transition-all duration-1000 delay-300 ${
-          visibleSections.has('features') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-        aria-label="Platform features"
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Complete Supply Chain Solution
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Everything you need to optimize your e-commerce operations, 
-              from data import to profit analysis, all in one integrated platform.
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Feature Navigation */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-gray-900">Platform Features</h3>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={toggleAutoPlay}
-                    className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
-                    aria-label={isAutoPlaying ? "Pause auto-rotation" : "Start auto-rotation"}
-                  >
-                    {isAutoPlaying ? "⏸️" : "▶️"}
-                  </button>
-                  <span className="text-xs text-gray-500">
-                    {isAutoPlaying ? "Auto-rotating" : "Paused"}
-                  </span>
-                </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                <span>No Data Transmission</span>
               </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                <span>Enterprise Security</span>
+              </div>
+            </div>
+          </div>
+        </section>
 
-              {features.map((feature, index) => (
-                <div
-                  key={feature.title}
-                  onClick={() => handleFeatureClick(index)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      handleFeatureClick(index);
-                    }
-                  }}
-                  className={`p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 ${
-                    currentFeature === index
-                      ? 'border-indigo-500 bg-indigo-50 shadow-lg'
-                      : 'border-gray-200 bg-white hover:border-indigo-300 hover:shadow-md'
-                  }`}
-                  role="button"
-                  tabIndex={0}
-                  aria-pressed={currentFeature === index}
-                  aria-label={`Select ${feature.title} feature`}
+        {/* Stats Section */}
+        <section 
+          ref={statsRef}
+          id="stats"
+          className="py-16 px-4 sm:px-6 lg:px-8 bg-white/50 backdrop-blur-sm"
+          aria-label="Platform statistics"
+        >
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+              {stats.map((stat, index) => (
+                <div 
+                  key={stat.label}
+                  className="text-center"
                 >
-                  <div className="flex items-start gap-4">
-                    <div className={`text-2xl p-3 rounded-lg transition-colors ${
-                      currentFeature === index ? 'bg-indigo-100' : 'bg-gray-100'
-                    }`}>
-                      {feature.icon}
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900 mb-2">{feature.title}</h4>
-                      <p className="text-gray-600 text-sm mb-3">{feature.description}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {feature.benefits.map((benefit, idx) => (
-                          <span 
-                            key={idx}
-                            className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full"
-                          >
-                            {benefit}
-                          </span>
-                        ))}
+                  <div className="text-3xl lg:text-4xl font-bold text-indigo-600 mb-2">
+                    {stat.value}
+                  </div>
+                  <div className="text-gray-900 font-medium mb-1">{stat.label}</div>
+                  <div className="text-sm text-gray-600">{stat.description}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section 
+          ref={featuresRef}
+          id="features"
+          className="py-20 px-4 sm:px-6 lg:px-8"
+          aria-label="Platform features"
+        >
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                Complete Supply Chain Solution
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Everything you need to optimize your e-commerce operations, 
+                from data import to profit analysis, all in one integrated platform.
+              </p>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* Feature Navigation */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900">Platform Features</h3>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={toggleAutoPlay}
+                      className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                      aria-label={isAutoPlaying ? "Pause auto-rotation" : "Start auto-rotation"}
+                    >
+                      {isAutoPlaying ? "⏸️" : "▶️"}
+                    </button>
+                    <span className="text-xs text-gray-500">
+                      {isAutoPlaying ? "Auto-rotating" : "Paused"}
+                    </span>
+                  </div>
+                </div>
+
+                {features.map((feature, index) => (
+                  <div
+                    key={feature.title}
+                    onClick={() => handleFeatureClick(index)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleFeatureClick(index);
+                      }
+                    }}
+                    className={`p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 ${
+                      currentFeature === index
+                        ? 'border-indigo-500 bg-indigo-50 shadow-lg'
+                        : 'border-gray-200 bg-white hover:border-indigo-300 hover:shadow-md'
+                    }`}
+                    role="button"
+                    tabIndex={0}
+                    aria-pressed={currentFeature === index}
+                    aria-label={`Select ${feature.title} feature`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className={`text-2xl p-3 rounded-lg transition-colors ${
+                        currentFeature === index ? 'bg-indigo-100' : 'bg-gray-100'
+                      }`}>
+                        {feature.icon}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 mb-2">{feature.title}</h4>
+                        <p className="text-gray-600 text-sm mb-3">{feature.description}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {feature.benefits.map((benefit, idx) => (
+                            <span 
+                              key={idx}
+                              className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full"
+                            >
+                              {benefit}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Feature Preview */}
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
-              <div className="text-center mb-6">
-                <div className="text-4xl mb-4">{currentFeatureData.icon}</div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  {currentFeatureData.title}
-                </h3>
-                <p className="text-gray-600 mb-6">{currentFeatureData.description}</p>
-                
-                <Link
-                  to={currentFeatureData.link}
-                  className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
-                  aria-label={`Explore ${currentFeatureData.title}`}
-                >
-                  Explore Feature
-                  <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
-              </div>
-
-              {/* Feature benefits */}
-              <div className="space-y-3">
-                {currentFeatureData.benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-gray-700">{benefit}</span>
-                  </div>
                 ))}
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Benefits Section */}
-      <section 
-        ref={benefitsRef}
-        id="benefits"
-        className={`py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 transition-all duration-1000 delay-400 ${
-          visibleSections.has('benefits') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-        aria-label="Platform benefits"
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Why Choose Our Platform?
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Built specifically for e-commerce operations teams who need reliable, 
-              accurate, and fast supply chain analytics.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {benefits.map((benefit, index) => (
-              <div 
-                key={benefit.category}
-                className={`bg-white rounded-xl p-8 shadow-lg border border-gray-200 transition-all duration-500 hover:shadow-xl hover:scale-105 ${
-                  visibleSections.has('benefits') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-                }`}
-                style={{ transitionDelay: `${index * 150}ms` }}
-              >
-                <h3 className="text-xl font-bold text-gray-900 mb-6">{benefit.category}</h3>
-                <ul className="space-y-4">
-                  {benefit.items.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-700 leading-relaxed">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section 
-        ref={testimonialsRef}
-        id="testimonials"
-        className={`py-20 px-4 sm:px-6 lg:px-8 transition-all duration-1000 delay-500 ${
-          visibleSections.has('testimonials') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-        aria-label="Customer testimonials"
-      >
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            Trusted by Operations Teams
-          </h2>
-          <p className="text-xl text-gray-600 mb-12">
-            See how teams like yours are transforming their supply chain operations
-          </p>
-
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
-            <div className="mb-6">
-              <div className="flex justify-center mb-4">
-                {[...Array(currentTestimonialData.rating)].map((_, i) => (
-                  <span key={i} className="text-yellow-400 text-xl">⭐</span>
-                ))}
-              </div>
-              
-              <blockquote className="text-lg text-gray-700 italic mb-6 leading-relaxed">
-                "{currentTestimonialData.content}"
-              </blockquote>
-              
-              <div className="flex items-center justify-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                  {currentTestimonialData.avatar}
-                </div>
-                <div className="text-left">
-                  <div className="font-semibold text-gray-900">{currentTestimonialData.name}</div>
-                  <div className="text-gray-600">{currentTestimonialData.role}</div>
-                  <div className="text-sm text-gray-500">{currentTestimonialData.company}</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Testimonial navigation */}
-            <div className="flex justify-center gap-2">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentTestimonial(index)}
-                  className={`w-3 h-3 rounded-full transition-colors ${
-                    currentTestimonial === index ? 'bg-indigo-600' : 'bg-gray-300'
-                  }`}
-                  aria-label={`View testimonial ${index + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section 
-        ref={faqRef}
-        id="faq"
-        className={`py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 transition-all duration-1000 delay-600 ${
-          visibleSections.has('faq') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-        aria-label="Frequently asked questions"
-      >
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-xl text-gray-600">
-              Everything you need to know about the platform
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <div 
-                key={index}
-                className="bg-white rounded-xl border border-gray-200 overflow-hidden"
-              >
-                <button
-                  onClick={() => toggleFAQ(index)}
-                  className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
-                  aria-expanded={expandedFAQ === index}
-                  aria-controls={`faq-answer-${index}`}
-                >
-                  <span className="font-semibold text-gray-900">{faq.question}</span>
-                  <span className={`text-indigo-600 transition-transform duration-200 ${
-                    expandedFAQ === index ? 'rotate-180' : ''
-                  }`}>
-                    ▼
-                  </span>
-                </button>
-                
-                {expandedFAQ === index && (
-                  <div 
-                    id={`faq-answer-${index}`}
-                    className="px-6 pb-4 text-gray-600 leading-relaxed"
-                    role="region"
-                    aria-labelledby={`faq-question-${index}`}
+              {/* Feature Preview */}
+              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
+                <div className="text-center mb-6">
+                  <div className="text-4xl mb-4">{currentFeatureData.icon}</div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    {currentFeatureData.title}
+                  </h3>
+                  <p className="text-gray-600 mb-6">{currentFeatureData.description}</p>
+                  
+                  <Link
+                    to={currentFeatureData.link}
+                    className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
+                    aria-label={`Explore ${currentFeatureData.title}`}
                   >
-                    {faq.answer}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+                    Explore Feature
+                    <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </div>
 
-      {/* CTA Section */}
-      <section 
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-indigo-600 to-purple-600"
-        aria-label="Call to action"
-      >
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-            Ready to Transform Your Operations?
-          </h2>
-          <p className="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
-            Join operations teams who have already streamlined their supply chain 
-            processes and improved their profit margins.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={handleGetStarted}
-              className="px-8 py-4 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-gray-50 transition-colors shadow-lg focus:outline-none focus:ring-4 focus:ring-white/50"
-            >
-              Start Free Trial
-            </button>
-            <button
-              onClick={handleViewDemo}
-              className="px-8 py-4 bg-transparent text-white font-semibold rounded-xl border-2 border-white hover:bg-white hover:text-indigo-600 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-white/50"
-            >
-              Schedule Demo
-            </button>
+                {/* Feature benefits */}
+                <div className="space-y-3">
+                  {currentFeatureData.benefits.map((benefit, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-gray-700">{benefit}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* Benefits Section */}
+        <section 
+          ref={benefitsRef}
+          id="benefits"
+          className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50"
+          aria-label="Platform benefits"
+        >
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                Why Choose Our Platform?
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Built specifically for e-commerce operations teams who need reliable, 
+                accurate, and fast supply chain analytics.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {benefits.map((benefit, index) => (
+                <div 
+                  key={benefit.category}
+                  className="bg-white rounded-xl p-8 shadow-lg border border-gray-200 transition-all duration-500 hover:shadow-xl hover:scale-105"
+                >
+                  <h3 className="text-xl font-bold text-gray-900 mb-6">{benefit.category}</h3>
+                  <ul className="space-y-4">
+                    {benefit.items.map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2 flex-shrink-0"></div>
+                        <span className="text-gray-700 leading-relaxed">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section 
+          ref={testimonialsRef}
+          id="testimonials"
+          className="py-20 px-4 sm:px-6 lg:px-8"
+          aria-label="Customer testimonials"
+        >
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+              Trusted by Operations Teams
+            </h2>
+            <p className="text-xl text-gray-600 mb-12">
+              See how teams like yours are transforming their supply chain operations
+            </p>
+
+            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
+              <div className="mb-6">
+                <div className="flex justify-center mb-4">
+                  {[...Array(currentTestimonialData.rating)].map((_, i) => (
+                    <span key={i} className="text-yellow-400 text-xl">⭐</span>
+                  ))}
+                </div>
+                
+                <blockquote className="text-lg text-gray-700 italic mb-6 leading-relaxed">
+                  "{currentTestimonialData.content}"
+                </blockquote>
+                
+                <div className="flex items-center justify-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                    {currentTestimonialData.avatar}
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold text-gray-900">{currentTestimonialData.name}</div>
+                    <div className="text-gray-600">{currentTestimonialData.role}</div>
+                    <div className="text-sm text-gray-500">{currentTestimonialData.company}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial navigation */}
+              <div className="flex justify-center gap-2">
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentTestimonial(index)}
+                    className={`w-3 h-3 rounded-full transition-colors ${
+                      currentTestimonial === index ? 'bg-indigo-600' : 'bg-gray-300'
+                    }`}
+                    aria-label={`View testimonial ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section 
+          ref={faqRef}
+          id="faq"
+          className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50"
+          aria-label="Frequently asked questions"
+        >
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-xl text-gray-600">
+                Everything you need to know about the platform
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {faqs.map((faq, index) => (
+                <div 
+                  key={index}
+                  className="bg-white rounded-xl border border-gray-200 overflow-hidden"
+                >
+                  <button
+                    onClick={() => toggleFAQ(index)}
+                    className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
+                    aria-expanded={expandedFAQ === index}
+                    aria-controls={`faq-answer-${index}`}
+                  >
+                    <span className="font-semibold text-gray-900">{faq.question}</span>
+                    <span className={`text-indigo-600 transition-transform duration-200 ${
+                      expandedFAQ === index ? 'rotate-180' : ''
+                    }`}>
+                      ▼
+                    </span>
+                  </button>
+                  
+                  {expandedFAQ === index && (
+                    <div 
+                      id={`faq-answer-${index}`}
+                      className="px-6 pb-4 text-gray-600 leading-relaxed"
+                      role="region"
+                      aria-labelledby={`faq-question-${index}`}
+                    >
+                      {faq.answer}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section 
+          className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-indigo-600 to-purple-600"
+          aria-label="Call to action"
+        >
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
+              Ready to Transform Your Operations?
+            </h2>
+            <p className="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
+              Join operations teams who have already streamlined their supply chain 
+              processes and improved their profit margins.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={handleGetStarted}
+                className="px-8 py-4 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-gray-50 transition-colors shadow-lg focus:outline-none focus:ring-4 focus:ring-white/50"
+              >
+                Start Free Trial
+              </button>
+              <button
+                onClick={handleViewDemo}
+                className="px-8 py-4 bg-transparent text-white font-semibold rounded-xl border-2 border-white hover:bg-white hover:text-indigo-600 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-white/50"
+              >
+                Schedule Demo
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8" role="contentinfo">
