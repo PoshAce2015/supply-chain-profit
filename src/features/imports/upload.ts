@@ -8,7 +8,7 @@ import { PurchaseVendorId, normalizeDomain } from '../../types/purchase'
 import { buildTimeline } from '../timeline/stitcher'
 import { setTimeline } from '../timeline/timelineSlice'
 import { addTimelineData } from './importsSlice'
-import { processCSVDataForTimeline, processImportsDataForTimeline } from '../timeline/timelineProcessor'
+import { processImportsDataForTimeline } from '../timeline/timelineProcessor'
 import { normId, canonHeader } from '../../lib/glueNormalize'
 import type { LinkHint } from '../../types/linkHints'
 import { importInternationalShipping } from '../../lib/glueImport'
@@ -236,7 +236,6 @@ const flexibleImport = (file: File, categoryId: string, sourceInfo?: any): Promi
       }
       
       // Use the existing parseFile function to handle both CSV and TSV files properly
-      console.log(`🔍 Parsing file with robust CSV/TSV parser...`)
       const { headers, rows: dataRows } = await parseFile(file)
       
       console.log(`📊 Found ${headers.length} columns and ${dataRows.length} rows`)
@@ -266,7 +265,6 @@ const flexibleImport = (file: File, categoryId: string, sourceInfo?: any): Promi
           
           // Debug: Log SKU processing
           if (fieldKey === 'sku') {
-            console.log(`🔍 Processing SKU: "${value}" -> "${fieldKey}"`)
           }
           
           // Coerce value to appropriate type
@@ -278,7 +276,6 @@ const flexibleImport = (file: File, categoryId: string, sourceInfo?: any): Promi
             
             // Debug: Log final SKU value
             if (fieldKey === 'sku') {
-              console.log(`✅ Final SKU value: ${coercedValue} (type: ${typeof coercedValue})`)
             }
           }
         })
@@ -298,7 +295,6 @@ const flexibleImport = (file: File, categoryId: string, sourceInfo?: any): Promi
         }
       })
       
-      console.log(`✅ Processed ${normalizedRows.length} rows with data`)
       
       // Store in timeline data
       if (normalizedRows.length > 0) {
@@ -321,7 +317,6 @@ const flexibleImport = (file: File, categoryId: string, sourceInfo?: any): Promi
               if (timelineData) {
                 const rebuilt = processImportsDataForTimeline(timelineData);
                 store.dispatch(setTimeline(rebuilt));
-                console.log('✅ Timeline rebuilt after glue import');
               }
             } catch (rebuildErr) {
               console.warn('Timeline rebuild after glue import failed:', rebuildErr);
@@ -373,7 +368,6 @@ const flexibleImport = (file: File, categoryId: string, sourceInfo?: any): Promi
             const timeline = processImportsDataForTimeline(timelineData)
             store.dispatch(setTimeline(timeline))
             
-            console.log('✅ Timeline rebuilt successfully with new processor')
             console.log(`📊 Timeline result: ${Object.keys(timeline.byOrder).length} orders, ${timeline.orphan.length} orphan events`)
             
             // Show success message
@@ -567,7 +561,6 @@ export const downloadTemplate = (categoryId: string): void => {
 function selectAllImportedRowsByCategory(state: any) {
   const out: { category: string; rows: any[] }[] = [];
   
-  console.log('🔍 Checking timeline data structure...');
   
   // Get data from the new timeline data structure (this is where we store it)
   const timelineData = state.imports?.timelineData;

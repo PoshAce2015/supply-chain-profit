@@ -98,7 +98,6 @@ export default function TimelineView() {
       const timeline = processImportsDataForTimeline(timelineData);
       dispatch(setTimeline(timeline));
       
-      console.log('✅ Timeline rebuilt successfully with new processor');
       alert(`Timeline rebuilt successfully! Found ${Object.keys(timeline.byOrder).length} orders and ${timeline.orphan.length} orphan events.`);
     } catch (error) {
       console.error('❌ Timeline rebuild failed:', error);
@@ -112,16 +111,11 @@ export default function TimelineView() {
       
       console.log(`📊 Loaded ${sampleSalesData.length} sales records and ${samplePurchaseData.length} purchase records`);
       
-      // Debug: Show sample data
-      console.log('🔍 Sample sales record:', sampleSalesData[0]);
-      console.log('🔍 Sample purchase record:', samplePurchaseData[0]);
       
       // Process data directly for timeline
       const timelineData = processCSVDataForTimeline(sampleSalesData, samplePurchaseData);
-      console.log('📋 Timeline result:', timelineData);
       dispatch(setTimeline(timelineData));
       
-      console.log('✅ Sample data loaded successfully');
       alert(`Timeline created! ${Object.keys(timelineData.byOrder).length} orders with ${timelineData.orphan.length} orphan events.`);
     } catch (error) {
       console.error('❌ Failed to load sample data:', error);
@@ -144,10 +138,8 @@ export default function TimelineView() {
       
       // Process imported data
       const processedTimeline = processImportsDataForTimeline(timelineData);
-      console.log('📋 Processed timeline result:', processedTimeline);
       dispatch(setTimeline(processedTimeline));
       
-      console.log('✅ Imported data processed successfully');
       alert(`Timeline created! ${Object.keys(processedTimeline.byOrder).length} orders with ${processedTimeline.orphan.length} orphan events.`);
     } catch (error) {
       console.error('❌ Failed to process imported data:', error);
