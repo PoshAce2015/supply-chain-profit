@@ -134,25 +134,25 @@ const faqs = [
   }
 ];
 
-export default function LandingPage() {
+export default function HomeView() {
   const navigate = useNavigate();
   
   // State management
   const [currentFeature, setCurrentFeature] = useState(0);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [expandedFAQ, setExpandedFAQ] = useState(null);
-  const [visibleSections, setVisibleSections] = useState(new Set());
+  const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+  const [visibleSections, setVisibleSections] = useState(new Set<string>());
   const [isLoading, setIsLoading] = useState(true);
   const [userPreferences, setUserPreferences] = useState({ reducedMotion: false, highContrast: false });
 
   // Refs for intersection observer
-  const heroRef = useRef(null);
-  const featuresRef = useRef(null);
-  const benefitsRef = useRef(null);
-  const testimonialsRef = useRef(null);
-  const statsRef = useRef(null);
-  const faqRef = useRef(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const featuresRef = useRef<HTMLElement>(null);
+  const benefitsRef = useRef<HTMLElement>(null);
+  const testimonialsRef = useRef<HTMLElement>(null);
+  const statsRef = useRef<HTMLElement>(null);
+  const faqRef = useRef<HTMLElement>(null);
 
   // Detect user preferences
   useEffect(() => {
@@ -207,7 +207,7 @@ export default function LandingPage() {
     navigate("/login");
   }, [navigate]);
 
-  const handleFeatureClick = useCallback((index) => {
+  const handleFeatureClick = useCallback((index: number) => {
     setCurrentFeature(index);
     setIsAutoPlaying(false);
   }, []);
@@ -216,7 +216,7 @@ export default function LandingPage() {
     setIsAutoPlaying(prev => !prev);
   }, []);
 
-  const toggleFAQ = useCallback((index) => {
+  const toggleFAQ = useCallback((index: number) => {
     setExpandedFAQ(prev => prev === index ? null : index);
   }, []);
 
