@@ -134,29 +134,26 @@ const faqs = [
   }
 ];
 
-// Move all data declarations to the top, before the component
-const features = [
-  {
-    icon: "📊",
-    title: "Data Imports",
-    description: "Upload and process CSV files from multiple sources with intelligent mapping",
-    benefits: ["Drag & drop interface", "Auto-header detection", "Error validation"],
-    link: "/imports"
-  },
-  {
-    icon: "🧮",
-    title: "Profit Calculator",
-    description: "Real-time margin calculations with comprehensive cost analysis",
-    benefits: ["Live calculations", "Multi-channel support", "Cost breakdown"],
-    link: "/calculator"
-  },
-  {
-    icon: "📦",
-    title: "Order Management",
-    description: "Track orders through complete lifecycle with SLA monitoring",
-    benefits: ["Two-person workflow", "Aging alerts", "Compliance tracking"],
-    link: "/orders"
-  },
+export default function LandingPage() {
+  const navigate = useNavigate();
+  
+  // State management
+  const [currentFeature, setCurrentFeature] = useState(0);
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [expandedFAQ, setExpandedFAQ] = useState(null);
+  const [visibleSections, setVisibleSections] = useState(new Set());
+  const [isLoading, setIsLoading] = useState(true);
+  const [userPreferences, setUserPreferences] = useState({ reducedMotion: false, highContrast: false });
+
+  // Refs for intersection observer
+  const heroRef = useRef(null);
+  const featuresRef = useRef(null);
+  const benefitsRef = useRef(null);
+  const testimonialsRef = useRef(null);
+  const statsRef = useRef(null);
+  const faqRef = useRef(null);
+
   // Detect user preferences
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -210,7 +207,7 @@ const features = [
     navigate("/login");
   }, [navigate]);
 
-  const handleFeatureClick = useCallback((index: number) => {
+  const handleFeatureClick = useCallback((index) => {
     setCurrentFeature(index);
     setIsAutoPlaying(false);
   }, []);
@@ -219,7 +216,7 @@ const features = [
     setIsAutoPlaying(prev => !prev);
   }, []);
 
-  const toggleFAQ = useCallback((index: number) => {
+  const toggleFAQ = useCallback((index) => {
     setExpandedFAQ(prev => prev === index ? null : index);
   }, []);
 
