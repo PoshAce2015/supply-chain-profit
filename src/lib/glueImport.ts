@@ -62,8 +62,12 @@ export async function importInternationalShipping(file: File) {
   const headerMapCanon: Record<string, string> = {};
   headers.forEach(h => {
     const c = canonHeader(h);
+    console.log(`Header "${h}" -> canonical "${c}"`);
     if (c) headerMapCanon[c] = h;
   });
+
+  console.log('Header mapping result:', headerMapCanon);
+  console.log('Available headers:', headers);
 
   // Require at least sales or purchase header to be recognized
   const hasSales = !!headerMapCanon["salesOrderId"];
@@ -71,7 +75,7 @@ export async function importInternationalShipping(file: File) {
   if (!hasSales && !hasPurchase) {
     return {
       ok: false,
-      message: "No valid glue links found — check headers or data format",
+      message: `No valid glue links found. Expected headers like "Seller Central Amazon.in" and "Amazon.com". Found: ${headers.join(', ')}`,
       details: { recognized: headerMapCanon, papaparseErrors: errors },
     };
   }

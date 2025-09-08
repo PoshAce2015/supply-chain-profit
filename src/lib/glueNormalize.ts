@@ -19,7 +19,7 @@ export function cleanHeader(h: string) {
   return h.toLowerCase()
     .replace(/\./g, "")     // dots
     .replace(/\s+/g, "")    // spaces
-    .replace(/-/g, "");     // ASCII dash
+    .replace(/[-_]/g, "");  // ASCII dash and underscore
 }
 
 export type Canon = "salesOrderId" | "purchaseOrderId" | "asin";
@@ -27,17 +27,19 @@ export type Canon = "salesOrderId" | "purchaseOrderId" | "asin";
 const headerMap: Record<string, Canon> = {
   // sales order id
   "sellercentralamazonin":"salesOrderId",
+  "sellercentralamazon":"salesOrderId",
   "sellercentral":"salesOrderId",
   "sellercentralorderid":"salesOrderId",
   "orderid":"salesOrderId",
-  "order-id":"salesOrderId",
+  "orderid":"salesOrderId",
   "salesorderid":"salesOrderId",
   "salesid":"salesOrderId",
   // purchase order id
   "amazoncom":"purchaseOrderId",
+  "amazon":"purchaseOrderId",
   "amazoncomorderid":"purchaseOrderId",
   "purchaseorderid":"purchaseOrderId",
-  "purchase-id":"purchaseOrderId",
+  "purchaseid":"purchaseOrderId",
   "po":"purchaseOrderId",
   "poid":"purchaseOrderId",
   // asin/sku

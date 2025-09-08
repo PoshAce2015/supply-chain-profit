@@ -306,7 +306,7 @@ const flexibleImport = (file: File, categoryId: string, sourceInfo?: any): Promi
         console.log(`[imports] Normalizing category: ${categoryId} -> ${categoryKey}`);
         
         // Special handling for glue category using comprehensive import function
-        if (categoryKey === 'glue') {
+        if (categoryKey === 'glue' || categoryKey === 'international-shipping') {
           try {
             const result = await importInternationalShipping(file);
             console.log(`[imports] Glue import result:`, result);

@@ -115,7 +115,6 @@ export default function App() {
                 <Route path="/imports/sales" element={<CategoryRoute categoryId="sales" />} />
                 <Route path="/imports/purchase" element={<CategoryRoute categoryId="purchase" />} />
                 <Route path="/imports/international-shipping" element={<CategoryRoute categoryId="international-shipping" />} />
-                <Route path="/imports/glue" element={<CategoryRoute categoryId="glue" />} />
                 <Route path="/imports/national-shipping" element={<CategoryRoute categoryId="national-shipping" />} />
                 <Route path="/imports/payment" element={<CategoryRoute categoryId="payment" />} />
                 <Route path="/imports/refund" element={<CategoryRoute categoryId="refund" />} />

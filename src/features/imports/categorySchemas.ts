@@ -202,19 +202,6 @@ export const CATEGORY_SCHEMAS: Record<string, CategorySchema> = {
     accept: ['.csv', '.txt', '.xlsx'],
     templateHref: '/templates/international-shipping-template.csv'
   },
-  glue: {
-    id: 'glue',
-    title: 'International Shipping (Glue)',
-    help: 'Import explicit links between sales and purchase orders for precise matching',
-    icon: '🔗',
-    schema: [
-      { key: 'salesOrderId', label: 'Sales Order ID', required: true, example: '408-4870009-9733125' },
-      { key: 'purchaseOrderId', label: 'Purchase Order ID', required: true, example: '112-1815601-9677016' },
-      { key: 'asin', label: 'ASIN (Optional)', required: false, example: 'B08JLTDKHS' }
-    ],
-    accept: ['.csv', '.txt', '.xlsx'],
-    templateHref: '/templates/glue-template.csv'
-  },
   'national-shipping': {
     id: 'national-shipping',
     title: 'National Shipping',
