@@ -134,29 +134,29 @@ const faqs = [
   }
 ];
 
-export default function HomeView() {
-  const navigate = useNavigate();
-  
-  // State management
-  const [currentFeature, setCurrentFeature] = useState(0);
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [visibleSections, setVisibleSections] = useState(new Set<string>());
-  const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [userPreferences, setUserPreferences] = useState({
-    reducedMotion: false,
-    highContrast: false
-  });
-
-  // Refs for intersection observer
-  const heroRef = useRef<HTMLElement>(null);
-  const featuresRef = useRef<HTMLElement>(null);
-  const benefitsRef = useRef<HTMLElement>(null);
-  const testimonialsRef = useRef<HTMLElement>(null);
-  const statsRef = useRef<HTMLElement>(null);
-  const faqRef = useRef<HTMLElement>(null);
-
+// Move all data declarations to the top, before the component
+const features = [
+  {
+    icon: "📊",
+    title: "Data Imports",
+    description: "Upload and process CSV files from multiple sources with intelligent mapping",
+    benefits: ["Drag & drop interface", "Auto-header detection", "Error validation"],
+    link: "/imports"
+  },
+  {
+    icon: "🧮",
+    title: "Profit Calculator",
+    description: "Real-time margin calculations with comprehensive cost analysis",
+    benefits: ["Live calculations", "Multi-channel support", "Cost breakdown"],
+    link: "/calculator"
+  },
+  {
+    icon: "📦",
+    title: "Order Management",
+    description: "Track orders through complete lifecycle with SLA monitoring",
+    benefits: ["Two-person workflow", "Aging alerts", "Compliance tracking"],
+    link: "/orders"
+  },
   // Detect user preferences
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
